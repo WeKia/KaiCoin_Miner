@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="UiInteractionTests.fs" />
+    <Compile Include="GameplayLoopTests.fs" />
+    <Compile Include="EconomySystemsTests.fs" />
+    <Compile Include="StateContractsTests.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\KaiCoinMiner.App\KaiCoinMiner.App.fsproj" />
+    <PackageReference Include="Expecto" Version="10.2.1" />
+  </ItemGroup>
+</Project>

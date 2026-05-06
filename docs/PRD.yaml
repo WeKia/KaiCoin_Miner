@@ -1,0 +1,148 @@
+﻿project:
+  name: KaiCoin Miner
+  type: standalone desktop idle simulation game
+  language: F#
+  platform: desktop
+  status: complete
+  source_of_truth: user_specification
+
+product_summary:
+  one_liner: A split-screen idle mining game where players solve arithmetic problems, automate production, trade KaiCoin for Cash, and race toward a final Mars launch.
+  core_fantasy: Build a mining desk, solve problems faster, scale automation, react to news-driven markets, and upgrade all the way to a Spaceship to Mars.
+
+goals:
+  - Deliver a responsive desktop game with a left gameplay area and a right shop/upgrades area.
+  - Make manual mining, automation, market timing, and upgrades feel interconnected.
+  - Keep the interface readable during fast-paced input, modal exchange actions, and live background updates.
+  - End the game with a clear, celebratory launch condition when the final item is purchased.
+
+implementation_status:
+  completed_features:
+    - Desktop Avalonia F# application with split-screen gameplay and shop layout.
+    - Manual mining with arithmetic problems, O/X feedback, and Enter-to-submit input.
+    - Auto-miners, upgrades, market pricing, news ticker updates, exchange flow, and final launch item.
+    - Local JSON save/load persistence for game state.
+    - Lightweight custom chart rendering for price history instead of a chart package dependency.
+
+architecture_decisions:
+  - F# desktop app built on Avalonia for the Windows target.
+  - MVU-style state and update flow to keep gameplay logic deterministic and UI state synchronized.
+  - Local JSON persistence at `%LOCALAPPDATA%\\KaiCoinMiner\\save.json`.
+  - Custom lightweight line chart rendering for game price history.
+
+non_goals:
+  - Multiplayer or online competition.
+  - Persistent cloud saves or account systems.
+  - Complex combat, exploration, or open-world systems.
+  - Real-world crypto integration.
+
+gameplay_loop:
+  primary_loop:
+    - Read the current arithmetic problem on the monitor.
+    - Type the answer with the keyboard and press Enter to submit.
+    - Receive O/X feedback and a reward on correct answers.
+    - Spend KaiCoin and Cash on upgrades, auto-miners, and exchange actions.
+    - Respond to news and price changes while automation continues in the background.
+
+ui_requirements:
+  layout:
+    - Split-screen desktop UI.
+    - Left side: desk environment with monitor, problem display, answer entry, feedback, and smartphone.
+    - Right side: shop grid plus auto-miner list with owned quantity and next cost.
+  top_status_bar:
+    fields:
+      - owned coins with cash value
+      - owned cash
+      - current price per coin
+      - scrolling recent news ticker
+  visual_rules:
+    - Purchasable prices render green.
+    - Unaffordable prices render red.
+    - Tooltips must include specs and witty descriptions.
+  smartphone:
+    behavior: Opens a centered exchange modal.
+    modal_contents:
+      - real-time coin price graph
+      - coin-to-cash selling controls
+  interaction_rules:
+    - Global numeric keyboard capture is active while the game window is focused.
+    - When the exchange modal is closed, typed input routes to the monitor answer field.
+    - When the exchange modal is open, typed numeric input routes to the modal sell quantity field.
+    - Enter submits the active input target.
+
+game_rules:
+  arithmetic_mining:
+    problem_generation: random arithmetic problems
+    success_reward: grant coins/cash rewards on correct answers
+    failure_rule: no penalty on wrong answers; immediately generate a new problem
+    feedback: show O/X result after each submission
+  difficulty:
+    base_behavior: starts manageable and rises with progression
+    scaling_rule: difficulty increases every 100 mined coins
+    upgrade_modifier: a dedicated upgrade reduces manual difficulty
+  automation:
+    background_flow: asynchronous real-time updates continue while the player is idle or interacting with UI
+    systems_updated_in_background:
+      - auto-mining
+      - news rotation
+      - price fluctuations
+
+economy:
+  currencies:
+    - KaiCoin
+    - Cash
+  market:
+    price_behavior:
+      - fluctuates via market trends
+      - includes random walk behavior
+      - is affected by news events
+  exchange:
+    action: sell KaiCoin for Cash from the smartphone modal
+
+content:
+  auto_miners:
+    - name: Monkey
+      output: 0.1/s
+    - name: Resting Youth
+      output: 1/s
+    - name: GPU
+      output: 10/s
+  upgrades:
+    - improve auto-miner efficiency
+    - reduce manual mining difficulty
+    - support progression toward the final launch item
+  final_item:
+    name: Spaceship to Mars
+    effect: triggers launch animation and the clear condition
+
+news_system:
+  cadence: every 30-60 seconds
+  effects:
+    - impact coin price
+    - impact mining difficulty
+  presentation: recent items scroll in the top status bar ticker
+
+acceptance_criteria:
+  - The game opens as a desktop window with a clear left gameplay region and right shop/upgrades region.
+  - The status bar shows coin holdings, cash holdings, current coin price, and a scrolling news ticker.
+  - The monitor accepts typed arithmetic answers, supports Enter submission, and shows O/X feedback.
+  - The smartphone opens a centered exchange modal with a live price graph and sell controls.
+  - Input focus switches correctly between the monitor and the modal.
+  - Auto-miners, price changes, and news continue to update over time.
+  - Difficulty rises every 100 mined coins and can be softened by the manual difficulty reduction upgrade.
+  - The final purchase of Spaceship to Mars plays a launch animation and completes the game.
+
+technical_notes:
+  implementation_style: desktop game with real-time state updates suitable for an F# UI architecture
+  update_model: keep gameplay, market, and input state synchronized with background timers and active UI focus
+  display_priorities:
+    - responsive input handling
+    - clear affordances for affordability
+    - readable live market feedback
+
+change_log:
+  - date: 2026-05-05
+    note: Implementation completed and the product specification was updated to reflect the finished desktop build.
+
+open_questions: []
+needs_clarification: []

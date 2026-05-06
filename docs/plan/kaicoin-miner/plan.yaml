@@ -1,0 +1,173 @@
+﻿plan_id: kaicoin-miner
+objective: Implement the full KaiCoin Miner game in F# as a Windows-friendly desktop app using Avalonia on .NET.
+complexity: medium
+planning_pass: 1
+plan_metrics:
+  waves: 3
+  tasks: 6
+  implementer_tasks: 5
+  reviewer_tasks: 1
+  designer_tasks: 0
+  browser_tester_tasks: 0
+  documentation_tasks: 0
+stack:
+  language: F#
+  runtime: .NET
+  ui_framework: Avalonia
+  architecture: MVU
+  persistence: local save files
+  desktop_target: Windows
+
+waves:
+  - wave: 1
+    title: Foundation and domain skeleton
+    goal: Create the solution structure, application host, and the core state/update model that all gameplay systems share.
+  - wave: 2
+    title: Gameplay systems
+    goal: Implement mining, progression, economy, and data flows so the game loop is playable end to end.
+  - wave: 3
+    title: UI polish and validation
+    goal: Finish the desktop experience, verify behavior, and prepare the app for a clean handoff.
+
+tasks:
+  - id: KAIM-001
+    title: Scaffold solution and Avalonia app host
+    wave: 1
+    status: completed
+    dependencies: []
+    agent: gem-implementer
+    targets:
+      - KaiCoinMiner.sln
+      - src/KaiCoinMiner.App/
+      - src/KaiCoinMiner.App/Program.fs
+      - src/KaiCoinMiner.App/App.axaml
+      - src/KaiCoinMiner.App/MainWindow.axaml
+    description: Create the F# solution, wire up the Avalonia desktop entry point, and establish the base application shell for an MVU game.
+    acceptance_criteria:
+      - Solution builds from a clean checkout with the Avalonia desktop project in place.
+      - The app launches to a visible desktop window on Windows.
+      - The project layout is ready for domain, UI, and persistence modules.
+    risk: Low-level project setup issues or Avalonia template mismatches could slow the first runnable build.
+
+  - id: KAIM-002
+    title: Define core game state, messages, and persistence contracts
+    wave: 1
+    status: completed
+    dependencies:
+      - KAIM-001
+    agent: gem-implementer
+    targets:
+      - src/KaiCoinMiner.App/Domain/State.fs
+      - src/KaiCoinMiner.App/Domain/Msg.fs
+      - src/KaiCoinMiner.App/Domain/Update.fs
+      - src/KaiCoinMiner.App/Infrastructure/Save.fs
+    description: Model coins, mining power, shop unlocks, exchange values, timers, and save/load boundaries so gameplay logic stays deterministic and testable.
+    acceptance_criteria:
+      - Core state and message types cover mining, economy, UI, and timer actions.
+      - The update path is pure or narrowly isolated where side effects are required.
+      - Save/load implementation covers local persistence for core game state without coupling it to UI code.
+      - Lifetime mined coins are tracked separately so exact 100-coin difficulty milestones can be evaluated reliably.
+    estimated_lines: 60
+    risk: If the state model is too narrow, later gameplay systems will require broad refactors.
+
+  - id: KAIM-003
+    title: Implement mining loop and math challenge gameplay
+    wave: 2
+    status: completed
+    dependencies:
+      - KAIM-002
+    agent: gem-implementer
+    targets:
+      - src/KaiCoinMiner.App/Domain/Mining.fs
+      - src/KaiCoinMiner.App/Domain/Challenge.fs
+      - src/KaiCoinMiner.App/Domain/Progression.fs
+    description: Build the main miner loop, generate short math challenges, award coins on success, and connect upgrade effects to the production rate, including the exact auto-miner outputs for Monkey 0.1/s, Resting Youth 1/s, and GPU 10/s.
+    acceptance_criteria:
+      - The player can mine, answer challenges, and receive rewards through the game loop.
+      - Manual mining reward wording matches the PRD-defined reward model and does not introduce any extra cash reward guarantee beyond the documented behavior.
+      - Upgrade effects change mining output in a visible and predictable way.
+      - The gameplay loop remains responsive while timers or periodic updates are running.
+      - O/X feedback appears after each submission.
+      - Wrong answers give no penalty and immediately generate a new problem.
+      - Arithmetic problems stay within the PRD-defined generation rules and remain short enough for rapid manual entry.
+      - Difficulty rises every 100 mined coins and the dedicated difficulty reduction upgrade softens manual difficulty.
+      - Lifetime mined coins remain distinct from spendable balance so milestone checks stay exact.
+      - Auto-miner outputs match the specified Monkey, Resting Youth, and GPU rates.
+    estimated_lines: 90
+    risk: Timer interaction and challenge state transitions can cause race conditions or duplicate reward handling.
+
+  - id: KAIM-004
+    title: Implement economy, shop, exchange, news, and chart data
+    wave: 2
+    status: completed
+    dependencies:
+      - KAIM-002
+      - KAIM-003
+    agent: gem-implementer
+    targets:
+      - src/KaiCoinMiner.App/Domain/Shop.fs
+      - src/KaiCoinMiner.App/Domain/Market.fs
+      - src/KaiCoinMiner.App/Domain/News.fs
+      - src/KaiCoinMiner.App/Domain/Charts.fs
+    description: Add the player-facing economy loop with upgrades, market fluctuations, short news events, and time-series data for graphs, using a simple custom-drawn line chart or canvas/polyline approach instead of adding avoidable chart dependency risk.
+    acceptance_criteria:
+      - Shop purchases and exchange calculations update state consistently.
+      - Market/news changes affect values in a controlled, explainable way.
+      - Chart data is produced from game state and can be rendered by the UI layer with a low-risk custom drawing approach.
+      - Market movement explicitly exhibits random-walk behavior in addition to news-driven changes.
+      - News cadence stays in the 30-60 second range and affects both price and difficulty.
+      - The final Spaceship to Mars item exists in the economy layer and exposes its clear-condition trigger to the UI.
+    estimated_lines: 80
+    risk: Coupling market logic too tightly to rendering could make balancing and testing difficult.
+
+  - id: KAIM-005
+    title: Build the desktop UI, layout, and visual polish
+    wave: 3
+    status: completed
+    dependencies:
+      - KAIM-003
+      - KAIM-004
+    agent: gem-implementer
+    targets:
+      - src/KaiCoinMiner.App/Views/
+      - src/KaiCoinMiner.App/Styles/
+      - src/KaiCoinMiner.App/MainWindow.axaml
+    description: Implement the desktop information architecture and interactive UI for mining, economy, charts, status feedback, modal exchange, and final-item presentation on a Windows-sized layout.
+    acceptance_criteria:
+      - The screen layout clearly separates gameplay, economy, and status information.
+      - Key states such as mining, upgrades, alerts, and charts are understandable at a glance.
+      - The UI design remains practical for Windows desktop use and does not depend on browser-specific behavior.
+      - Global numeric keyboard capture works while the game window is focused.
+      - When the exchange modal is closed, input routes to the monitor answer field.
+      - When the exchange modal is open, numeric input routes to the exchange sell field.
+      - Enter submits whichever input target is currently active.
+      - The top status bar shows coin holdings, cash holdings, current coin price, and the scrolling news ticker.
+      - Purchasable items render in green, unaffordable items render in red, and tooltips include specs plus witty descriptions.
+      - The smartphone opens a centered exchange modal with a live price graph and sell controls.
+      - The auto-miner list renders each item's owned quantity and next cost.
+      - Purchasing Spaceship to Mars plays the launch animation and reaches the clear condition.
+    estimated_lines: 120
+    risk: Visual complexity can make the app feel cluttered if density and spacing are not controlled early.
+
+  - id: KAIM-006
+    title: Validate end-to-end behavior and prepare handoff docs
+    wave: 3
+    status: completed
+    dependencies:
+      - KAIM-001
+      - KAIM-002
+      - KAIM-003
+      - KAIM-004
+      - KAIM-005
+    agent: gem-reviewer
+    targets:
+      - src/KaiCoinMiner.App/
+      - README.md
+      - docs/
+    description: Review the integrated app for gameplay correctness, regressions, and release readiness, then capture the run/build instructions needed by future contributors.
+    acceptance_criteria:
+      - Core gameplay paths work from launch through mining, upgrades, and persistence.
+      - Blocking defects are identified with clear repro steps and fix priority.
+      - The repository includes enough usage guidance to build and run the app locally.
+    estimated_lines: 50
+    risk: Late integration issues may expose gaps in earlier state modeling or UI assumptions.

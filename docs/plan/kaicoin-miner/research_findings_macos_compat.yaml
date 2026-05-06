@@ -1,0 +1,41 @@
+﻿plan_id: kaicoin-miner
+objective: Determine macOS build compatibility
+focus_area: macos_compat
+created_at: 2026-05-06T00:00:00Z
+created_by: gem-researcher
+status: completed
+
+tldr: |
+  - The Avalonia F# project successfully publishes for macOS (`osx-arm64`) using the current configuration.
+  - The `dotnet publish` command completed with success.
+  - `<OutputType>WinExe</OutputType>` and `<ApplicationManifest>app.manifest</ApplicationManifest>` do not block macOS compilation. They are properly handled/ignored by the .NET SDK when targeting macOS.
+
+research_metadata:
+  methodology: Ran a `dotnet publish` command targeted directly at the `osx-arm64` runtime, followed by inspecting the `.fsproj` contents.
+  scope: narrow compatibility check.
+  confidence: high
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed:
+- file: KaiCoinMiner.App.fsproj
+  path: src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj
+  purpose: Main Avalonia application project file
+  key_elements:
+  - element: OutputType
+    type: variable
+    location: src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj:3
+    description: Set to WinExe
+  - element: ApplicationManifest
+    type: variable
+    location: src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj:5
+    description: Points to app.manifest
+  language: xml
+  lines: 30
+
+patterns_found: []
+
+open_questions: []
+
+gaps: []

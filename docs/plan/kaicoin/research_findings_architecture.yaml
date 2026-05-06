@@ -1,0 +1,72 @@
+﻿plan_id: kaicoin
+objective: Analyze the KaiCoin Miner spec and break it into implementation domains for an F# desktop app.
+focus_area: architecture
+created_at: '2026-05-05T00:00:00Z'
+created_by: gem-researcher
+status: completed
+
+tldr: |
+  1. Complexity: Medium. UI state and asynchronous timer logic require careful management in F#, but math/resource mechanics are predictable.
+  2. Architecture: MVU (Model-View-Update) using Avalonia.FuncUI or Elmish.WPF. Modules: GameState (App State), GameLoop (Timers), Minigame (Math Problems), Economy (Market/News/Exchange/Shop), Analytics (Graphs), Views (Animation/UI).
+  3. Minimal Viable Scope: Basic timer loop, simple static cost shop, linear math problem miner, static exchange rate, and no complex animations.
+  4. Technical Risks: Managing concurrent timer states safely, creating fluid animations in F# desktop frameworks, and ensuring responsive UI during math loops.
+
+research_metadata:
+  methodology: Derived from prompt constraints (timers, math problems, market, shop, exchange, graphs, animation) and F# desktop UI best practices.
+  scope: Architectural strategy and risk assessment
+  confidence: medium
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed: []
+
+patterns_found:
+  - category: architecture
+    pattern: Model-View-Update (MVU)
+    description: Recommended pattern for handling KaiCoin's complex app state, timers, and concurrent market systems in F#.
+    examples: []
+    prevalence: common
+
+related_architecture:
+  components_relevant_to_domain:
+    - component: AppState
+      responsibility: Holds coin balance, tick rate, shop inventory, market rates.
+      location: Domain.State
+      relationship_to_domain: Core data model
+    - component: TimerSystem
+      responsibility: Ticks coin generation, rotates market news, updates graphs.
+      location: Domain.Loop
+      relationship_to_domain: Triggers Update messages
+    - component: MathGenerator
+      responsibility: Yields captchas/equations for manual mining.
+      location: Domain.Minigame
+      relationship_to_domain: pure functions
+  data_flow_involving_domain: Redux/Elmish unidirectional flow (Dispatch Msg -> Update State -> Render View)
+
+related_technology_stack:
+  languages_used_in_domain:
+    - F#
+  frameworks_used_in_domain:
+    - name: Avalonia.FuncUI or Elmish.WPF
+      usage_in_domain: Cross-platform or Windows-native UI rendering
+    - name: OxyPlot or LiveCharts
+      usage_in_domain: Graph data visualization
+
+domain_security_considerations:
+  sensitive_areas:
+    - area: Local Save Data
+      location: AppData
+      concern: Players could easily manipulate plain-text JSON to cheat coins.
+
+open_questions:
+  - question: Where is the complete written Proposal/Spec document?
+    context: Only a README was found in the workspace, with no detailed spec. Assumed parameters from prompt.
+    type: research
+    affects: ["precise_scope"]
+
+gaps:
+  - area: Detailed Spec
+    description: The full specification document referenced by the user is missing from the workspace.
+    impact: nice_to_know
+    affects: ["implementation_details"]

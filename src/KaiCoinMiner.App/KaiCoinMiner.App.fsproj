@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Domain\State.fs" />
+    <Compile Include="Domain\Progression.fs" />
+    <Compile Include="Domain\Challenge.fs" />
+    <Compile Include="Domain\Mining.fs" />
+    <Compile Include="Domain\Shop.fs" />
+    <Compile Include="Domain\News.fs" />
+    <Compile Include="Domain\Market.fs" />
+    <Compile Include="Domain\Charts.fs" />
+    <Compile Include="Domain\Msg.fs" />
+    <Compile Include="Domain\Update.fs" />
+    <Compile Include="UI\Shell.fs" />
+    <Compile Include="UI\Interactions.fs" />
+    <Compile Include="Views\ShopCatalog.fs" />
+    <Compile Include="Infrastructure\Save.fs" />
+    <Compile Include="MainWindow.axaml.fs" />
+    <Compile Include="App.axaml.fs"/>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.2" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
