@@ -33,6 +33,7 @@ type MainWindow () as this =
     let mutable tickerOffset = 0
     let mutable launchProgress = 0.0
     let mutable previousModalOpen = false
+    let mutable cursorVisible = false
 
     let coinsText = lazy (this.FindControl<TextBlock>("CoinsText"))
     let cashText = lazy (this.FindControl<TextBlock>("CashText"))
@@ -172,7 +173,6 @@ type MainWindow () as this =
         if Int32.TryParse(monitorText, &parsed) then
             dispatch (Msg.ChallengeSubmitted parsed)
             monitorText <- ""
-            monitorInputText.Value.Text <- ""
         else
             this.RefreshUi()
 
@@ -202,6 +202,8 @@ type MainWindow () as this =
 
     and onWindowTick () =
         tickerOffset <- tickerOffset + 1
+        if tickerOffset % 3 = 0 then
+            cursorVisible <- not cursorVisible
         dispatch (Msg.Tick DateTimeOffset.UtcNow)
         applyLaunchAnimationStep ()
 
@@ -214,7 +216,6 @@ type MainWindow () as this =
 
             monitorText <- routed.MonitorText
             exchangeText <- routed.ExchangeText
-            monitorInputText.Value.Text <- monitorText
             sellQuantityBox.Value.Text <- exchangeText
 
             match routed.SubmitTarget with
@@ -263,6 +264,9 @@ type MainWindow () as this =
         challengePromptText.Value.Text <-
             if String.IsNullOrWhiteSpace(state.Challenge.Prompt) then "Preparing challenge..."
             else state.Challenge.Prompt
+
+        let cursorStr = if cursorVisible then "▮" else "▯"
+        monitorInputText.Value.Text <- monitorText + cursorStr
 
         let monkey = state.AutoMiners[AutoMinerKind.Monkey]
         let youth = state.AutoMiners[AutoMinerKind.RestingYouth]

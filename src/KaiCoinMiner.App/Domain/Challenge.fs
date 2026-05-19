@@ -31,7 +31,7 @@ module Challenge =
             let left = pickInRange 1 maxOperand (nonce + 11)
             let right = pickInRange 1 maxOperand (nonce + 23)
 
-            { Prompt = $"{left}+{right}"
+            { Prompt = $"{left} + {right}"
               Operator = ArithmeticOperator.Add
               Left = left
               Right = right
@@ -44,7 +44,7 @@ module Challenge =
             let left = max rawLeft rawRight
             let right = min rawLeft rawRight
 
-            { Prompt = $"{left}-{right}"
+            { Prompt = $"{left} - {right}"
               Operator = ArithmeticOperator.Subtract
               Left = left
               Right = right
@@ -55,7 +55,7 @@ module Challenge =
             let left = pickInRange 1 maxFactor (nonce + 31)
             let right = pickInRange 1 maxFactor (nonce + 43)
 
-            { Prompt = $"{left}*{right}"
+            { Prompt = $"{left} * {right}"
               Operator = ArithmeticOperator.Multiply
               Left = left
               Right = right
@@ -67,7 +67,7 @@ module Challenge =
             let quotient = pickInRange 1 12 (nonce + 59)
             let dividend = divisor * quotient
 
-            { Prompt = $"{dividend}/{divisor}"
+            { Prompt = $"{dividend} / {divisor}"
               Operator = ArithmeticOperator.Divide
               Left = dividend
               Right = divisor
