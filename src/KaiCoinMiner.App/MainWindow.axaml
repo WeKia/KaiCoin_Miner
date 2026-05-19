@@ -40,69 +40,27 @@
                         BorderThickness="0"
                         ClipToBounds="True"
                         Padding="24,20">
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto" RowSpacing="8" ClipToBounds="True">
-                        <TextBlock Text="MINING TERMINAL" FontSize="14" FontWeight="SemiBold" Opacity="0.8" Foreground="#AEE9FF" />
-
+                    <Grid RowDefinitions="*,Auto" RowSpacing="20" ClipToBounds="True">
                         <TextBlock Name="ChallengePromptText"
-                                   Grid.Row="1"
                                    Classes="mono"
-                                   FontSize="40"
+                                   FontSize="64"
                                    FontWeight="Bold"
                                    Foreground="#F1FAFF"
                                    TextWrapping="Wrap"
                                    TextAlignment="Center"
+                                   VerticalAlignment="Center"
                                    MaxLines="2"
                                    TextTrimming="WordEllipsis" />
 
-                        <TextBlock Name="ChallengeDifficultyText"
-                                   Grid.Row="2"
-                                   FontSize="20"
-                                   Foreground="#BEE1FF"
+                        <TextBlock Name="MonitorInputText"
+                                   Grid.Row="1"
+                                   Classes="mono"
+                                   FontSize="36"
+                                   FontWeight="SemiBold"
+                                   Foreground="#AEE9FF"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap"
                                    MaxLines="1"
-                                   TextTrimming="WordEllipsis" />
-
-                        <TextBox Name="MonitorAnswerBox"
-                                 Grid.Row="3"
-                                 Classes="mono"
-                                   FontSize="28"
-                                   Height="56"
-                                 HorizontalContentAlignment="Center"
-                                 PlaceholderText="Type answer and press Enter"
-                                 Background="#F5FBFF"
-                                 Foreground="#0C1720"
-                                 BorderBrush="#77D9FF"
-                                 BorderThickness="2"
-                                 CornerRadius="6" />
-
-                        <TextBlock Name="FeedbackText"
-                                   Grid.Row="4"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Foreground="#D7F2FF"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   MaxLines="2"
-                                   TextTrimming="WordEllipsis"
-                                   VerticalAlignment="Center" />
-
-                        <TextBlock Name="RewardMessageText"
-                                   Grid.Row="5"
-                                   FontSize="16"
-                                   Foreground="#D7F2FF"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   MaxLines="1"
-                                   TextTrimming="WordEllipsis" />
-
-                        <TextBlock Name="AlertText"
-                                   Grid.Row="6"
-                                   FontSize="14"
-                                   Foreground="#F5C56E"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap"
-                                   MaxLines="2"
                                    TextTrimming="WordEllipsis" />
                     </Grid>
                 </Border>

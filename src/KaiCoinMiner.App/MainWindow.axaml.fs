@@ -24,7 +24,6 @@ type MainWindow () as this =
     let tickerSeparator = "  ||  "
     let greenBrush = SolidColorBrush(Color.Parse("#25C47A"))
     let redBrush = SolidColorBrush(Color.Parse("#D04C4C"))
-    let warningBrush = SolidColorBrush(Color.Parse("#EAA43C"))
     let rocketTransform = TranslateTransform(0.0, 0.0)
     let timer = DispatcherTimer(Interval = TimeSpan.FromMilliseconds(200.0))
 
@@ -33,7 +32,6 @@ type MainWindow () as this =
     let mutable exchangeText = ""
     let mutable tickerOffset = 0
     let mutable launchProgress = 0.0
-    let mutable lastTransientAlert = ""
     let mutable previousModalOpen = false
 
     let coinsText = lazy (this.FindControl<TextBlock>("CoinsText"))
@@ -41,12 +39,8 @@ type MainWindow () as this =
     let priceText = lazy (this.FindControl<TextBlock>("PriceText"))
     let newsTickerText = lazy (this.FindControl<TextBlock>("NewsTickerText"))
     let challengePromptText = lazy (this.FindControl<TextBlock>("ChallengePromptText"))
-    let challengeDifficultyText = lazy (this.FindControl<TextBlock>("ChallengeDifficultyText"))
-    let monitorAnswerBox = lazy (this.FindControl<TextBox>("MonitorAnswerBox"))
+    let monitorInputText = lazy (this.FindControl<TextBlock>("MonitorInputText"))
     let smartphoneButton = lazy (this.FindControl<Button>("SmartphoneButton"))
-    let feedbackText = lazy (this.FindControl<TextBlock>("FeedbackText"))
-    let rewardMessageText = lazy (this.FindControl<TextBlock>("RewardMessageText"))
-    let alertText = lazy (this.FindControl<TextBlock>("AlertText"))
     let monkeyButton = lazy (this.FindControl<Button>("MonkeyButton"))
     let youthButton = lazy (this.FindControl<Button>("YouthButton"))
     let gpuButton = lazy (this.FindControl<Button>("GpuButton"))
@@ -80,8 +74,6 @@ type MainWindow () as this =
     let routeFocusToActiveInput () =
         if state.Ui.IsExchangeModalOpen then
             sellQuantityBox.Value.Focus() |> ignore
-        else
-            monitorAnswerBox.Value.Focus() |> ignore
 
     let setButtonStyle (button: Button) isAffordable content tooltip =
         let status = if isAffordable then "READY" else "LOCKED"
@@ -169,7 +161,6 @@ type MainWindow () as this =
                 if not (String.IsNullOrWhiteSpace(saveDir)) then
                     Directory.CreateDirectory(saveDir) |> ignore
                 Save.save savePath state
-                lastTransientAlert <- $"Saved progress to {savePath}."
             | Update.Effect.LoadState ->
                 dispatch (Msg.Loaded (Save.tryLoad savePath))
 
@@ -181,10 +172,8 @@ type MainWindow () as this =
         if Int32.TryParse(monitorText, &parsed) then
             dispatch (Msg.ChallengeSubmitted parsed)
             monitorText <- ""
-            monitorAnswerBox.Value.Text <- ""
-            lastTransientAlert <- ""
+            monitorInputText.Value.Text <- ""
         else
-            lastTransientAlert <- "Type a numeric answer before submitting."
             this.RefreshUi()
 
     and submitExchangeSell () =
@@ -197,9 +186,7 @@ type MainWindow () as this =
             dispatch Msg.SellCoinsConfirmed
             exchangeText <- ""
             sellQuantityBox.Value.Text <- ""
-            lastTransientAlert <- ""
         else
-            lastTransientAlert <- "Enter a sell quantity greater than zero."
             this.RefreshUi()
 
     and applyLaunchAnimationStep () =
@@ -227,7 +214,7 @@ type MainWindow () as this =
 
             monitorText <- routed.MonitorText
             exchangeText <- routed.ExchangeText
-            monitorAnswerBox.Value.Text <- monitorText
+            monitorInputText.Value.Text <- monitorText
             sellQuantityBox.Value.Text <- exchangeText
 
             match routed.SubmitTarget with
@@ -276,33 +263,6 @@ type MainWindow () as this =
         challengePromptText.Value.Text <-
             if String.IsNullOrWhiteSpace(state.Challenge.Prompt) then "Preparing challenge..."
             else state.Challenge.Prompt
-
-        challengeDifficultyText.Value.Text <- $"Manual Difficulty: {state.Challenge.Difficulty}"
-
-        feedbackText.Value.Text <-
-            match state.Challenge.LastFeedback with
-            | Some ChallengeFeedback.O -> "O"
-            | Some ChallengeFeedback.X -> "X"
-            | None -> "-"
-
-        feedbackText.Value.Foreground <-
-            match state.Challenge.LastFeedback with
-            | Some ChallengeFeedback.O -> greenBrush
-            | Some ChallengeFeedback.X -> redBrush
-            | None -> warningBrush
-
-        rewardMessageText.Value.Text <- state.Challenge.LastRewardMessage |> Option.defaultValue ""
-
-        let marketAlert =
-            state.Market.ActiveNews
-            |> Option.map (fun headline -> $"Market alert: {headline}")
-            |> Option.defaultValue ""
-
-        alertText.Value.Text <-
-            if String.IsNullOrWhiteSpace(lastTransientAlert) then marketAlert
-            else
-                if String.IsNullOrWhiteSpace(marketAlert) then lastTransientAlert
-                else lastTransientAlert + "  " + marketAlert
 
         let monkey = state.AutoMiners[AutoMinerKind.Monkey]
         let youth = state.AutoMiners[AutoMinerKind.RestingYouth]
