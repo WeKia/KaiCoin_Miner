@@ -75,4 +75,19 @@ let uiInteractionTests =
             Expect.equal monitorWithDecimal.ExchangeText "3" "exchange input should stay unchanged when monitor is active"
             Expect.equal exchangeWithDecimal.MonitorText "12" "monitor should stay unchanged when exchange is active"
             Expect.equal exchangeWithDecimal.ExchangeText "3." "exchange input should allow decimal quantities"
+
+        testCase "shop formatting keeps upgrade tiles scannable" <| fun _ ->
+            let affordable = Shell.describeUpgradeTile "Manual Solver" 2 375.5m true
+            let locked = Shell.describeUpgradeTile "Manual Solver" 2 375.5m false
+
+            Expect.equal affordable.Header "Manual Solver" "tile header should be the descriptor label"
+            Expect.equal affordable.LevelText "Level 2" "level should be on its own line"
+            Expect.equal affordable.CostText "Next $376" "cost should not include status text"
+            Expect.equal affordable.StatusText "READY" "status should be explicit and separate"
+            Expect.equal locked.StatusText "LOCKED" "status should reflect affordability"
+
+        testCase "shop formatting keeps item rows detailed" <| fun _ ->
+            let text = Shell.formatListRowContent "Monkey" 3 41.234m "KC"
+
+            Expect.equal text "Monkey | Owned 3 | Next 41.23 KC" "list rows should preserve detailed purchase information"
     ]
