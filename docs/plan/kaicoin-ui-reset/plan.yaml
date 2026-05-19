@@ -1,0 +1,109 @@
+﻿plan_id: kaicoin-ui-reset
+objective: "Remove the current UI and rewrite it from scratch. First step only: create a new screen using Background.png as the background, and make the monitor area in Background.png display the problem text."
+created_at: "2026-05-14T00:00:00Z"
+created_by: gem-planner
+status: approved
+research_confidence: high
+
+plan_metrics:
+  wave_1_task_count: 1
+  total_dependencies: 0
+  risk_score: low
+
+tldr: |
+  Replace the existing layout in MainWindow.axaml with a full-screen Background.png image.
+  Overlay the monitor area to display the math problem text and answer input.
+  Relocate all other existing named controls into an IsVisible="False" hidden panel to avoid breaking F# FindControl references.
+
+open_questions:
+  - "What are the exact pixel coordinates for the monitor area in Background.png to accurately position the text overlay?"
+
+pre_mortem:
+  overall_risk_level: low
+  critical_failure_modes:
+    - scenario: "F# code throws NullReferenceException on finding controls."
+      likelihood: low
+      impact: high
+      mitigation: "Ensure every named control currently referenced in MainWindow.axaml.fs is preserved verbatim in a hidden Panel in MainWindow.axaml."
+  assumptions:
+    - "Background.png is copied into the Assets folder or already exists and is included in the Avalonia resource group."
+
+implementation_specification:
+  code_structure: "Re-root MainWindow.axaml with a Panel/Grid. Layer 1: Background image. Layer 2: A Grid absolute-positioned or margin-positioned over the monitor for ChallengePromptText and MonitorAnswerBox. Layer 3: A StackPanel with IsVisible=False containing all other legacy named controls."
+  affected_areas:
+    - src/KaiCoinMiner.App/MainWindow.axaml
+  component_details:
+    - component: MainWindow.axaml
+      responsibility: "Display full-screen background and position problem text in monitor area."
+      interfaces:
+        - "Preserves all x:Name entries expected by MainWindow.axaml.fs"
+  dependencies:
+    - component: MainWindow.axaml
+      relationship: "Calls to Assets/Background.png"
+  integration_points:
+    - "F# interaction bindings (ensure no logical break when hiding UI elements)."
+
+contracts: []
+
+tasks:
+  - id: t1_replace_ui
+    title: "Rewrite MainWindow.axaml to use Background.png"
+    description: |
+      Update `src/KaiCoinMiner.App/MainWindow.axaml` to remove the old layout.
+      Set the root to a Grid.
+      Add an `<Image Source="avares://KaiCoinMiner.App/Assets/Background.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />`.
+      Add a visible container to overlay the monitor area, containing `ChallengePromptText`, `MonitorAnswerBox`, and immediately related texts (`ChallengeDifficultyText`, `FeedbackText`, `RewardMessageText`, `AlertText`).
+      Add a hidden container (`<StackPanel IsVisible="False">`) to house **all** other unused named controls (CoinsText, CashText, MonkeyButton, ExchangeOverlay, etc.) so that `MainWindow.axaml.fs` still compiles and runs without null reference errors.
+    wave: 1
+    agent: gem-implementer
+    prototype: true
+    covers: []
+    priority: high
+    status: pending
+    dependencies: []
+    conflicts_with: []
+    context_files:
+      - path: "src/KaiCoinMiner.App/MainWindow.axaml"
+        description: "The file to rewrite."
+      - path: "src/KaiCoinMiner.App/MainWindow.axaml.fs"
+        description: "Reference for which named controls must be preserved."
+    planning_pass: 1
+    planning_history:
+      - pass: 1
+        reason: "Initial plan to reset UI and unblock new design."
+        timestamp: "2026-05-14T00:00:00Z"
+        estimated_effort: small
+        estimated_files: 1
+        estimated_lines: 150
+        focus_area: "UI Layout"
+        verification:
+          - "App compiles."
+          - "App runs without crashing on startup."
+          - "Math problem is visible over the monitor area of Background.png."
+        acceptance_criteria:
+          - "Old layout is gone."
+          - "Background.png is displayed."
+          - "Problem text and input box are displayed."
+        failure_modes:
+          - scenario: "A control name is missed in the hidden panel, causing a crash."
+            likelihood: medium
+            impact: high
+            mitigation: "Copy the exact list of x:Name properties from the existing MainWindow.axaml before deleting the old layout."
+        tech_stack:
+          - "Avalonia UI"
+        test_coverage: null
+        requires_review: false
+        review_depth: lightweight
+        review_security_sensitive: false
+        validation_matrix:
+          - scenario: "Launch application"
+            steps:
+              - "Run dotnet run"
+            expected_result: "Background is visible, math problem is visible, no crashes."
+        environment: development
+        requires_approval: false
+        devops_security_sensitive: false
+        task_type: update
+        audience: developers
+        coverage_matrix:
+          - "MainWindow.axaml"

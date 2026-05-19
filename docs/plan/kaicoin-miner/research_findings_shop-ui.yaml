@@ -1,0 +1,110 @@
+﻿plan_id: kaicoin-miner
+objective: "Research current shop purchase UI and analyze smallest implementation surface for Cookie Clicker-like layout (upgrades in grid, items in list)."
+focus_area: shop-ui
+created_at: "2026-05-07T00:00:00Z"
+created_by: "gem-researcher"
+status: completed
+
+tldr: |
+  - Primary UI files are `MainWindow.axaml` (layout) and `MainWindow.axaml.fs` (state binding and logic).
+  - UI is hardcoded currently; there are no dynamic ItemsControl lists for the shop. Buttons are explicitly named and updated via `setButtonStyle`.
+  - Upgrades and Items (AutoMiners) are already strictly decoupled in both State (`state.Upgrades`, `state.AutoMiners`) and UI (separate StackPanels in the `Economy and Upgrades` panel).
+  - The smallest implementation surface to achieve a "Cookie Clicker layout" requires reordering the borders in `MainWindow.axaml` (Upgrades first), changing the Upgrades StackPanel to a UniformGrid/WrapPanel, and updating the text formatting mapped through `MainWindow.axaml.fs` to fit smaller grid tiles.
+
+research_metadata:
+  methodology: "grep_search and read_file used to explore Shop UI structures and F# update logic."
+  scope: "Investigated UI rendering layer and domain mapping for Shop functionality in MainWindow."
+  confidence: "high"
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed:
+- file: "MainWindow.axaml"
+  path: "src/KaiCoinMiner.App/MainWindow.axaml"
+  purpose: "Defines the static grid and widget layouts for the entire window."
+  key_elements:
+  - element: "Economy and Upgrades panel"
+    type: "pattern"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml:85"
+    description: "Hardcoded Grid containing separate Borders for Auto-Miners and Upgrades with explicitly named buttons (e.g., MonkeyButton, ManualUpgradeButton)."
+  language: "xml"
+  lines: 200
+
+- file: "MainWindow.axaml.fs"
+  path: "src/KaiCoinMiner.App/MainWindow.axaml.fs"
+  purpose: "Handles Avalonia binding (MVU update cycle) to DOM elements."
+  key_elements:
+  - element: "updateUi"
+    type: "function"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:283"
+    description: "Looks up descriptor maps from ShopCatalog and manually formats button text by calling `setButtonStyle` for each hardcoded shop identity."
+  - element: "setButtonStyle"
+    type: "function"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:89"
+    description: "Sets `.Content` string, Foreground color based on affordability, and attaches ToolTip."
+  language: "fsharp"
+  lines: 396
+
+- file: "ShopCatalog.fs"
+  path: "src/KaiCoinMiner.App/Views/ShopCatalog.fs"
+  purpose: "Provides static string resources for shop entities."
+  key_elements:
+  - element: "autoMinerDescriptors"
+    type: "variable"
+    location: "src/KaiCoinMiner.App/Views/ShopCatalog.fs:8"
+    description: "Map of AutoMinerKind to UI descriptors (Label, Specs, WittyDescription)."
+  - element: "upgradeDescriptors"
+    type: "variable"
+    location: "src/KaiCoinMiner.App/Views/ShopCatalog.fs:25"
+    description: "Map of UpgradeKind to UI descriptors."
+  language: "fsharp"
+  lines: 41
+
+patterns_found:
+- category: "structure"
+  pattern: "Static UI Element Binding"
+  description: "Dynamic lists are not used. Specific game entities map exactly 1-to-1 to statically named control nodes in the XAML which receive stringified UI templates from the F# codebehind."
+  examples:
+  - file: "MainWindow.axaml.fs"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:283"
+    snippet: "setButtonStyle monkeyButton.Value (Shop.canAffordAutoMiner AutoMinerKind.Monkey state)..."
+  prevalence: "common"
+
+related_architecture:
+  components_relevant_to_domain:
+  - component: "ShopCatalog"
+    responsibility: "Static string repositories mapping domain enums to view properties"
+    location: "src/KaiCoinMiner.App/Views/ShopCatalog.fs"
+    relationship_to_domain: "Reads domain enums (AutoMinerKind, UpgradeKind)"
+  interfaces_used_by_domain: []
+  data_flow_involving_domain: "State updates trigger `updateUi`, which grabs state quantities and translates them into formatted texts piped into `.Content` of XAML `<Button>` nodes."
+  key_relationships_to_domain: []
+
+related_technology_stack:
+  languages_used_in_domain:
+  - "xml"
+  - "fsharp"
+  frameworks_used_in_domain:
+  - name: "Avalonia UI"
+    usage_in_domain: "XAML layouts and Codebehind explicit element referencing"
+  libraries_used_in_domain: []
+
+related_conventions:
+  naming_patterns_in_domain: "Files containing view markup have .axaml suffix, backend code-behind matching uses .axaml.fs."
+  structure_of_domain: "Views handle both structural visual logic and layout logic."
+  error_handling_in_domain: "UI binding checks affordablity (`Shop.canAfford*`) to visually lock components instead of error alerts."
+  testing_in_domain: "No UI tests visible. Shop logic relies on StateContractsTests."
+  documentation_in_domain: "No in-line documentation in view files."
+
+open_questions:
+- question: "If Upgrades go to a grid, will the raw strings containing cost and levels fit into the smaller tiles created by a grid layout horizontally?"
+  context: "setButtonStyle concatenates multiple details (`Label | Level | Cost | READY`) into a single string. Grids might truncate this text. XAML level re-styling of the Button content might be required."
+  type: "decision_blocker"
+  affects: ["shop-ui-refactor"]
+
+gaps:
+- area: "Dynamic shop content"
+  description: "Since all elements are hardcoded explicit references, adding a new item or upgrade requires modifying XAML, the Descriptor file, State, and MainWindow code behind, preventing dynamically scaling list UI components."
+  impact: "nice_to_know"
+  affects: []

@@ -1,0 +1,110 @@
+﻿plan_id: "kaicoin-ui-reset"
+objective: "Rewrite main-window to use Background.png, show core mining loop in monitor area, and keep other controls visibly preserved to avoid bricking."
+created_at: "2026-05-14T00:00:00Z"
+created_by: "gem-planner"
+status: "approved"
+research_confidence: "high"
+
+plan_metrics:
+  wave_1_task_count: 1
+  total_dependencies: 0
+  risk_score: "low"
+
+tldr: |
+  Replace the existing UI with Background.png.
+  Position the core mining loop (problem text and answer box) inside the monitor area.
+  Preserve all other functional controls in a visible fallback container so the app remains playable.
+open_questions:
+  - "What are the exact pixel metrics for the monitor area in Background.png?"
+
+pre_mortem:
+  overall_risk_level: "low"
+  critical_failure_modes:
+    - scenario: "F# code throws NullReferenceException on finding controls."
+      likelihood: "low"
+      impact: "high"
+      mitigation: "Ensure every named control currently referenced in MainWindow.axaml.fs is preserved in the XAML."
+  assumptions:
+    - "Background.png is copied into the Assets folder and is included in the Avalonia resource group."
+
+implementation_specification:
+  code_structure: "Grid-based layout. Layer 1: Background.png. Layer 2: Monitor UI overlay (Challenge Prompt, Monitor Answer Box). Layer 3: Unstyled ScrollViewer grouping all remaining functional controls to keep them visible."
+  affected_areas:
+    - "src/KaiCoinMiner.App/MainWindow.axaml"
+  component_details:
+    - component: "MainWindow.axaml"
+      responsibility: "Main screen visual layout and user interactions."
+      interfaces:
+        - "Preserves all x:Name controls expected by MainWindow.axaml.fs"
+  dependencies:
+    - component: "MainWindow.axaml"
+      relationship: "Depends on Background.png"
+  integration_points:
+    - "F# interaction bindings."
+
+contracts: []
+
+tasks:
+  - id: "t1_rewrite_main_window_preserving_controls"
+    title: "Rewrite MainWindow.axaml using Background.png and preserve UI"
+    description: |
+      Fully replace the UI in `src/KaiCoinMiner.App/MainWindow.axaml`.
+      Make it a `Grid` holding `<Image Source="avares://KaiCoinMiner.App/Assets/Background.png" .../>` filling the screen.
+      Position the core mining loop (`ChallengePromptText`, `MonitorAnswerBox`, `ChallengeDifficultyText`, `FeedbackText`, `RewardMessageText`, `AlertText`) in the monitor area of the background.
+      For all other named functional controls (CoinsText, CashText, Shop Buttons, SmartphoneButton, Exchange Overlay elements, etc.), place them in a visible, unstyled fallback container (e.g. a StackPanel docked to the right side). Do not use `IsVisible="False"` for this fallback area.
+      Preserve the `ExchangeOverlay` structure completely and leave its native IsVisible trigger intact.
+    wave: 1
+    agent: "gem-implementer"
+    prototype: false
+    covers: []
+    priority: "high"
+    status: "pending"
+    dependencies: []
+    conflicts_with: []
+    context_files:
+      - path: "src/KaiCoinMiner.App/MainWindow.axaml"
+        description: "The file to rewrite."
+      - path: "src/KaiCoinMiner.App/MainWindow.axaml.fs"
+        description: "Reference for which named controls must be preserved."
+    planning_pass: 2
+    planning_history:
+      - pass: 2
+        reason: "Replan based on critique: do not hide functional controls as this bricks the app. Group and keep them visible."
+        timestamp: "2026-05-14T00:00:00Z"
+        estimated_effort: "small"
+        estimated_files: 1
+        estimated_lines: 150
+        focus_area: "UI Layout"
+        verification:
+          - "App compiles."
+          - "App runs without crashing on startup."
+          - "Math problem is visible over the monitor area of Background.png."
+          - "Shop upgrades and coins text are visibly preserved."
+        acceptance_criteria:
+          - "Old layout is gone."
+          - "Background.png is displayed."
+          - "Problem text and input box are displayed."
+          - "Other controls remain visible and functional."
+        failure_modes:
+          - scenario: "A control name is missed in the fallback panel, causing a crash."
+            likelihood: "medium"
+            impact: "high"
+            mitigation: "Copy the exact list of x:Name properties from the existing MainWindow.axaml before deleting the old layout."
+        tech_stack:
+          - "Avalonia UI"
+        test_coverage: null
+        requires_review: false
+        review_depth: "lightweight"
+        review_security_sensitive: false
+        validation_matrix:
+          - scenario: "Launch application"
+            steps:
+              - "Run dotnet run"
+            expected_result: "Background is visible, math problem is visible, no crashes, buttons can be clicked."
+        environment: "development"
+        requires_approval: false
+        devops_security_sensitive: false
+        task_type: "update"
+        audience: "developers"
+        coverage_matrix:
+          - "MainWindow.axaml"

@@ -1,3 +1,7 @@
 ﻿# .NET and F# build outputs
 **/bin/
 **/obj/
+
+# IDE / tooling
+.omo/
+.sisyphus/

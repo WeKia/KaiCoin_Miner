@@ -1,0 +1,49 @@
+﻿plan_id: "MainWindow-UI-Repair"
+objective: "Assess the smallest safe repair for MainWindow.axaml"
+focus_area: "MainWindow-UI-Reset"
+created_at: "2026-05-14T00:00:00Z"
+created_by: "gem-researcher"
+status: "completed"
+
+tldr: |
+  - Eagerly dereferenced controls include monkeyButton, youthButton, gpuButton, manualUpgradeButton, efficiencyUpgradeButton, marketUpgradeButton, and spaceshipButton.
+  - Making these controls optional requires a broad refactor of MainWindow.axaml.fs (in the initialization `do` block and `RefreshUi`).
+  - Option A (moving parked controls to a visible utility area without changing the F# code) is the smallest safe repair.
+
+research_metadata:
+  methodology: "Read MainWindow.axaml.fs to identify control usages and initialization in F#"
+  scope: "MainWindow.axaml.fs initialization and RefreshUi methods"
+  confidence: "high"
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed:
+- file: "MainWindow.axaml.fs"
+  path: "src/KaiCoinMiner.App/MainWindow.axaml.fs"
+  purpose: "Handles UI logic and event wire-up for MainWindow."
+  key_elements:
+  - element: "monkeyButton, youthButton, gpuButton, etc."
+    type: "variable"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:238"
+    description: "Buttons are eagerly attached to Click handlers in the 'do' block (e.g. `monkeyButton.Value.Click.Add(...)`). If control is missing, it crashes."
+  - element: "RefreshUi"
+    type: "function"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:301"
+    description: "Directly accesses `.Value` on lazy controls to update styles and states on every UI refresh. Making them optional requires rewriting these calls."
+  language: "F#"
+  lines: 400
+
+patterns_found:
+- category: "initialization"
+  pattern: "Lazy lazy `.Value` access on startup"
+  description: "Controls are found via `lazy (this.FindControl<T>)` and eagerly accessed for event binding."
+  examples:
+  - file: "MainWindow.axaml.fs"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:236"
+    snippet: "monkeyButton.Value.Click.Add(fun _ -> dispatch (Msg.BuyAutoMiner AutoMinerKind.Monkey))"
+  prevalence: "common"
+
+open_questions: []
+
+gaps: []

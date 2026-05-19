@@ -1,0 +1,71 @@
+﻿plan_id: kaicoin
+objective: Research the current UI state for a main-window UI reset using Background.png
+focus_area: MainWindow-UI-Reset
+created_at: "2026-05-14T00:00:00Z"
+created_by: gem-researcher
+status: completed
+
+tldr: |
+  - `src/KaiCoinMiner.App/Assets/Background.png` exists.
+  - `MainWindow.axaml` is a Grid with controls deeply tied to `MainWindow.axaml.fs` via `FindControl`.
+  - The smallest safe implementation is to add an `Image` for `Background.png` as the root, display the problem text area on top, and hide all other required named controls in a collapsed panel to prevent code-behind crashes.
+  - There are 33 critical controls named in the XAML that the code-behind explicitly references.
+
+research_metadata:
+  methodology: semantic_search and read_file on MainWindow.axaml and MainWindow.axaml.fs
+  scope: Analyzed UI XAML and F# code-behind expectations
+  confidence: high
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed:
+- file: MainWindow.axaml
+  path: src/KaiCoinMiner.App/MainWindow.axaml
+  purpose: Current UI layout for the main window, splitting screen into standard panels and a drawn PC monitor.
+  key_elements:
+  - element: "<Grid RowDefinitions=\"Auto,*\">"
+    type: pattern
+    location: "src/KaiCoinMiner.App/MainWindow.axaml:8"
+    description: "Root grid setup that will be replaced"
+  language: xml
+  lines: 243
+- file: MainWindow.axaml.fs
+  path: src/KaiCoinMiner.App/MainWindow.axaml.fs
+  purpose: Code-behind driving UI updates, maintaining hardcoded lazy references to XAML elements.
+  key_elements:
+  - element: "this.FindControl<T>(\"...\")"
+    type: pattern
+    location: "src/KaiCoinMiner.App/MainWindow.axaml.fs:35-65"
+    description: "Looks up controls by name; if these elements are removed from XAML, NullReferenceExceptions will occur at runtime upon usage."
+  language: fsharp
+  lines: 191
+
+patterns_found:
+- category: structure
+  pattern: Hardcoded control resolution via FindControl
+  description: Code-behind relies on exact x:Name matching with UI components and evaluates them lazily.
+  examples:
+  - file: src/KaiCoinMiner.App/MainWindow.axaml.fs
+    location: src/KaiCoinMiner.App/MainWindow.axaml.fs:35
+    snippet: "let coinsText = lazy (this.FindControl<TextBlock>(\"CoinsText\"))"
+  prevalence: common
+
+related_architecture:
+  components_relevant_to_domain:
+  - component: MainWindow Code-Behind
+    responsibility: Connecting domain logic strings and button actions to UI elements.
+    location: src/KaiCoinMiner.App/MainWindow.axaml.fs
+    relationship_to_domain: Depends heavily on named UI layout.
+
+open_questions:
+- question: Should we move bindings to an MVVM pattern with a ViewModel instead of FindControl?
+  context: The current UI is tightly coupled to FindControl. Doing a pure rewritten UI layout requires either duplicating all 33 named controls in a hidden container or porting to DataContext bindings.
+  type: nice_to_know
+  affects: []
+
+gaps:
+- area: Problem Text Monitor Coordinates
+  description: The exact placement coordinates or padding needed to align problem text perfectly within the monitor area of new Background.png is unknown without trial and error.
+  impact: research_blocker
+  affects: []

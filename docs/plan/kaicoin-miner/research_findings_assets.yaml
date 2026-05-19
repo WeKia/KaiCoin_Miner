@@ -1,0 +1,49 @@
+﻿plan_id: kaicoin-miner
+objective: Inspect Avalonia app current handling of assets/images
+focus_area: assets
+created_at: '2026-05-07'
+created_by: gem-researcher
+status: completed
+tldr: |
+  - There are currently no Assets folders or existing image resources in the project.
+  - src/KaiCoinMiner.App/MainWindow.axaml is the main file managing the layout and "Mining Desk" area.
+  - The most natural place for a custom desk background image is inside the Border element representing the Mining Desk in MainWindow.axaml.
+research_metadata:
+  methodology: grep_search for asset references and file extensions, directory listing, read_file of MainWindow.axaml and GameTheme.axaml.
+  scope: src/KaiCoinMiner.App
+  confidence: high
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+files_analyzed:
+  - file: MainWindow.axaml
+    path: src/KaiCoinMiner.App/MainWindow.axaml
+    purpose: Main application window and game layout.
+    key_elements:
+      - element: Border (Grid.Column="0")
+        type: pattern
+        location: src/KaiCoinMiner.App/MainWindow.axaml:16
+        description: Holds the layout for the 'Mining Desk' area. Suitable location for an inner `<Image>` tag or Background `ImageBrush`.
+    language: xml
+    lines: 50
+  - file: KaiCoinMiner.App.fsproj
+    path: src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj
+    purpose: F# project definition handling build properties and AvaloniaResource items (none exist).
+    key_elements: []
+    language: xml
+    lines: 40
+patterns_found:
+  - category: structure
+    pattern: XAML Layout Without Image References
+    description: UI completely relies on stylized elements via GameTheme.axaml and plain text layout, avoiding external assets.
+    examples:
+      - file: MainWindow.axaml
+        location: src/KaiCoinMiner.App/MainWindow.axaml:16
+        snippet: '<Border Grid.Column="0" Classes="panel" Padding="14">'
+    prevalence: common
+open_questions:
+  - question: Should the image be set as a background brush on the border or as an Image control?
+    context: Setting it as an ImageBrush inside MainWindow.axaml could retain current padding/layout.
+    type: nice_to_know
+    affects: []
+gaps: []

@@ -1,0 +1,50 @@
+﻿plan_id: kaicoin-mining-desk
+objective: "Inspect the current state of src/KaiCoinMiner.App/MainWindow.axaml to answer layout and structure questions regarding the left Mining Desk column."
+focus_area: "MainWindow-LeftColumn"
+created_at: "2026-05-14T12:00:00Z"
+created_by: "gem-researcher"
+status: "completed"
+
+tldr: |
+  - Structure: The left Mining Desk column is a `<Border Classes="panel">` wrapping a 5-row Grid.
+  - Framing: The visible framing comes from this outer `panel` Border and several inner `<Border Classes="panel-soft">` containers.
+  - Output Rendering: Feedback/reward/alert text renders inside a centered `StackPanel` overlaid on the `desk.png` and `pc.png` inside Grid Row 3.
+  - Smallest Surface for Refactor: Replace the column's outer `Border` with a raw `Grid`, remove the `panel-soft` inner borders, use `desk.png` as the column's full background, and overlay the `pc.png` with text/input elements positioned (via Margins/Grid Rows) specifically over the monitor's screen area.
+
+research_metadata:
+  methodology: "Read MainWindow.axaml to inspect XAML structure."
+  scope: "src/KaiCoinMiner.App/MainWindow.axaml"
+  confidence: "high"
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed:
+- file: "MainWindow.axaml"
+  path: "src/KaiCoinMiner.App/MainWindow.axaml"
+  purpose: "Main Avalonia UI window definition"
+  key_elements:
+  - element: "<Border Grid.Column='0' Classes='panel'>"
+    type: "layout"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml:16"
+    description: "The main container for the left column, defining the outer panel border."
+  - element: "<Border Grid.Row='3' Classes='panel-soft'>"
+    type: "layout"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml:28"
+    description: "The container holding the desk and monitor images and the output overlay."
+  - element: "<StackPanel Spacing='8' VerticalAlignment='Center' Margin='12'>"
+    type: "layout"
+    location: "src/KaiCoinMiner.App/MainWindow.axaml:39"
+    description: "Where FeedbackText, RewardMessageText, and AlertText currently render (centered over the images/overlay)."
+  language: "xml"
+  lines: 100
+
+patterns_found: []
+
+open_questions:
+- question: "Should the input field and submit button also be moved inside the monitor screen?"
+  context: "The guidance asks for output rendering in the monitor, but minimal surface area might suggest moving all inputs onto the monitor."
+  type: "decision_blocker"
+  affects: []
+
+gaps: []

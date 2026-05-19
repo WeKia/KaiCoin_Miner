@@ -1,0 +1,44 @@
+﻿  plan_id: kaicoin-mining-desk
+objective: Inspect current UI state for Mining Desk and Asset availability
+focus_area: ui-assets
+created_at: "2026-05-14T00:00:00Z"
+created_by: gem-researcher
+status: completed
+
+tldr: |
+  - Both `src/KaiCoinMiner.App/Assets/pc.png` and `src/KaiCoinMiner.App/Assets/desk.png` are present.
+  - The Mining Desk panel structure places a single image (`desk-sample.png`), a shaded border, and text overlays in a layered Grid.
+  - Simplest placement: Replace the existing `desk-sample.png` Image tag with two sibling Image tags (`desk.png` first as background, `pc.png` second as foreground) within the same underlying layer of the Grid, leaving the shading Border and StackPanel untouched.
+
+research_metadata:
+  methodology: file directory listing and targeted file reading of UI source
+  scope: narrow inspection of UI XAML and asset directory
+  confidence: high
+  coverage: 100
+  decision_blockers: 0
+  research_blockers: 0
+
+files_analyzed:
+- file: MainWindow.axaml
+  path: src/KaiCoinMiner.App/MainWindow.axaml
+  purpose: Application main window layout and styling mapping
+  key_elements:
+  - element: Grid (Mining Desk)
+    type: pattern
+    location: "src/KaiCoinMiner.App/MainWindow.axaml:49"
+    description: "Layering grid containing desk-sample.png, overlay border, and control stack panel"
+  language: axaml
+  lines: 63
+
+patterns_found:
+- category: structure
+  pattern: Grid layering for backgrounds
+  description: Background visual elements are placed first in a container Grid, shaded by a subsequent dark alpha border, and topped with content blocks.
+  examples:
+  - file: src/KaiCoinMiner.App/MainWindow.axaml
+    location: "49"
+    snippet: "<Grid><Image.../><Border.../><StackPanel.../></Grid>"
+  prevalence: common
+
+open_questions: []
+gaps: []

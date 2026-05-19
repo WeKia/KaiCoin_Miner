@@ -1,0 +1,95 @@
+﻿plan_id: "kaicoin-cookie-clicker-ui"
+objective: "Make the shop purchase UI similar to Cookie Clicker, with upgrades displayed at the top in a grid layout and items displayed below in a list layout."
+created_at: "2026-05-07T00:00:00Z"
+created_by: "gem-planner"
+status: "approved"
+research_confidence: "high"
+
+plan_metrics:
+  wave_1_task_count: 1
+  total_dependencies: 0
+  risk_score: "low"
+
+tldr: |
+  Modify the XAML layout of the shop pane in `MainWindow.axaml` to create a Cookie Clicker style UI. 
+  The upgrades section will be placed above the auto-miners by swapping their Grid.Row assignments, and the upgrades' container will be converted from a StackPanel to a UniformGrid to present them as a horizontal grid. No F# viewmodel bindings need changing because the element Names remain intact.
+
+open_questions: []
+
+pre_mortem:
+  overall_risk_level: "low"
+  critical_failure_modes: []
+  assumptions:
+    - "The structural swap does not break any implicit styles or layout dimensions within the Avalonia view."
+    - "Buttons in the UniformGrid will naturally stretch using the existing Button.shop style without creating layout clipping."
+
+implementation_specification:
+  code_structure: "UI structural manipulation without business logic or MVU changes."
+  affected_areas:
+    - "src/KaiCoinMiner.App/MainWindow.axaml"
+  component_details:
+    - component: "Shop View (MainWindow.axaml)"
+      responsibility: "Display upgrades above auto-miners and present upgrades in a horizontal grid."
+      interfaces: []
+  dependencies: []
+  integration_points: []
+
+contracts: []
+
+tasks:
+  - id: "reorder-and-grid-shop-ui"
+    title: "Reorder Shop UI and Apply Grid Layout to Upgrades"
+    description: |
+      1. Open `src/KaiCoinMiner.App/MainWindow.axaml`.
+      2. Locate the "Economy and Upgrades" Grid on the right panel.
+      3. Change the `Grid.Row` assignment of the "Upgrades" Border to `1` and the "Auto-Miners" Border to `2`.
+      4. In the "Upgrades" section, replace the `<StackPanel>` enclosing `ManualUpgradeButton`, `EfficiencyUpgradeButton`, and `MarketUpgradeButton` with `<UniformGrid Columns="2">`.
+      5. Maintain existing names so XAML controls remain bound to `MainWindow.axaml.fs`.
+    wave: 1
+    agent: "gem-implementer"
+    prototype: false
+    covers: []
+    priority: "low"
+    status: "pending"
+    dependencies: []
+    conflicts_with: []
+    context_files:
+      - path: "src/KaiCoinMiner.App/MainWindow.axaml"
+        description: "The primary XAML layout definition to be updated."
+
+planning_pass: 1
+planning_history:
+  - pass: 1
+    reason: "Initial plan drafting for the UI rearrangement."
+    timestamp: "2026-05-07T00:00:00Z"
+    estimated_effort: "small"
+    estimated_files: 1
+    estimated_lines: 10
+    focus_area: "UI Layout"
+    verification:
+      - "Run the application and verify that Upgrades visually appear above Auto-Miners in the right panel."
+      - "Verify that Upgrades elements render in a horizontal grid formation."
+      - "Ensure all buttons retain their functionality and correctly update when affordable."
+    acceptance_criteria:
+      - "Upgrades display at the top of the 'Economy and Upgrades' view."
+      - "Upgrades use a Grid layout (side-by-side) mimicking Cookie Clicker upgrades."
+      - "Items (Auto-Miners) remain in their original vertical list layout below the upgrades."
+    failure_modes: []
+    tech_stack:
+      - "Avalonia XAML"
+    test_coverage: null
+    requires_review: false
+    review_depth: null
+    review_security_sensitive: false
+    validation_matrix:
+      - scenario: "Run game and inspect UI layout"
+        steps:
+          - "Run `dotnet run --project src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj`"
+          - "Identify the position of Upgrades corresponding to Auto-Miners"
+        expected_result: "Upgrades are placed above Auto-Miners and placed inside a Grid."
+    environment: "development"
+    requires_approval: false
+    devops_security_sensitive: false
+    task_type: "update"
+    audience: "developers"
+    coverage_matrix: []
