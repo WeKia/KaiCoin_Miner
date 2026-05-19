@@ -4,9 +4,11 @@ KaiCoin Miner is a cross-platform desktop incremental game built with Avalonia.
 
 ## Requirements
 
-- .NET 10 SDK
-- Windows or macOS desktop runtime support for `net10.0`
+- .NET 10 SDK (for development only)
+- Windows, macOS, or Linux (Ubuntu/Debian-based distributions) desktop
 - Avalonia desktop dependencies are restored through NuGet
+
+> **Note on Linux**: The app is published as a self-contained executable, so no .NET runtime installation is required on the target machine. Linux builds require the standard X11 client libraries (`libX11-6`, `libICE6`, `libSM6`), which are pre-installed on Ubuntu Desktop. For minimal/WSL environments, install these via `sudo apt install libice6 libsm6 libx11-6`.
 
 ## Build
 
@@ -30,11 +32,27 @@ dotnet run --project tests/KaiCoinMiner.App.Tests/KaiCoinMiner.App.Tests.fsproj 
 
 ## Publish
 
-Publish for macOS (Apple Silicon):
+All publish commands produce **self-contained, single-file executables**. No .NET runtime or additional software installation is required on the target machine.
+
+### Windows (x64)
 
 ```bash
-dotnet publish src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj -r osx-arm64 -c Release --self-contained false
+dotnet publish src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj -r win-x64 -c Release
 ```
+
+### macOS (Apple Silicon)
+
+```bash
+dotnet publish src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj -r osx-arm64 -c Release
+```
+
+### Linux (x64)
+
+```bash
+dotnet publish src/KaiCoinMiner.App/KaiCoinMiner.App.fsproj -r linux-x64 -c Release
+```
+
+> **Linux Note**: The executable includes the .NET runtime and Avalonia native libraries. Standard X11 desktop libraries must be present on the system (pre-installed on Ubuntu Desktop). For WSL or headless environments, install `libice6`, `libsm6`, and `libx11-6` first.
 
 ## Save File
 
@@ -62,8 +80,9 @@ C:\Users\<you>\AppData\Local\KaiCoinMiner\save.json
 
 ## Scope
 
-- Windows and macOS desktop
+- Windows, macOS, and Linux (Ubuntu/Debian) desktop
 - Avalonia UI client, not a web or console app
+- Self-contained single-file executables for all platforms
 - Main game project: `src/KaiCoinMiner.App`
 - Tests: `tests/KaiCoinMiner.App.Tests`
 
