@@ -5,117 +5,169 @@
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
         x:Class="KaiCoinMiner.App.MainWindow"
         Title="KaiCoin Miner">
-    <Grid RowDefinitions="Auto,*" Margin="18" RowSpacing="12">
-        <Border Classes="panel" Grid.Row="0" Padding="12,10">
-            <Grid ColumnDefinitions="Auto,24,Auto,24,Auto,*" VerticalAlignment="Center">
-                <TextBlock Name="CoinsText" Classes="mono" FontSize="15" />
-                <TextBlock Grid.Column="1" Text="|" Opacity="0.55" />
-                <TextBlock Name="CashText" Grid.Column="2" Classes="mono" FontSize="15" />
-                <TextBlock Grid.Column="3" Text="|" Opacity="0.55" />
-                <TextBlock Name="PriceText" Grid.Column="4" Classes="mono" FontSize="15" />
-                <TextBlock Name="NewsTickerText" Grid.Column="5" Classes="mono" HorizontalAlignment="Stretch" Margin="16,0,0,0" />
-            </Grid>
-        </Border>
+    <Grid ClipToBounds="True">
+        <Viewbox Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Canvas Width="1920" Height="1080" ClipToBounds="True">
+                <Image Source="avares://KaiCoinMiner.App/Assets/Background.png"
+                       Width="1920"
+                       Height="1080"
+                       Stretch="Fill" />
 
-        <Grid Grid.Row="1" ColumnDefinitions="3*,2*" ColumnSpacing="12">
-            <Border Grid.Column="0" Classes="panel" Padding="14">
-                <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="10">
-                    <TextBlock Classes="title" Text="Mining Desk" />
-                    <Border Grid.Row="1" Classes="panel-soft" Padding="12">
-                        <StackPanel Spacing="8">
-                            <TextBlock Name="ChallengePromptText" Classes="mono" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" />
-                            <TextBlock Name="ChallengeDifficultyText" HorizontalAlignment="Center" Opacity="0.85" />
-                        </StackPanel>
-                    </Border>
-
-                    <Grid Grid.Row="2" ColumnDefinitions="3*,Auto" ColumnSpacing="8">
-                        <TextBox Name="MonitorAnswerBox" PlaceholderText="Type answer - Enter to submit" FontSize="18" Classes="mono" />
-                        <Button Name="SmartphoneButton" Grid.Column="1" Width="120" Classes="shop" Content="Phone: Exchange" />
+                <Border Canvas.Left="36"
+                        Canvas.Top="28"
+                        Width="1848"
+                        Padding="16,10"
+                        CornerRadius="10"
+                        Background="#B912161A"
+                        BorderBrush="#40E2E7F0"
+                        BorderThickness="1">
+                    <Grid ColumnDefinitions="Auto,20,Auto,20,Auto,*" VerticalAlignment="Center">
+                        <TextBlock Name="CoinsText" Classes="mono" FontSize="20" Foreground="#F3F8FF" />
+                        <TextBlock Grid.Column="1" Text="|" Opacity="0.55" Foreground="#EAF2FF" />
+                        <TextBlock Name="CashText" Grid.Column="2" Classes="mono" FontSize="20" Foreground="#F3F8FF" />
+                        <TextBlock Grid.Column="3" Text="|" Opacity="0.55" Foreground="#EAF2FF" />
+                        <TextBlock Name="PriceText" Grid.Column="4" Classes="mono" FontSize="20" Foreground="#F3F8FF" />
+                        <TextBlock Name="NewsTickerText" Grid.Column="5" Classes="mono" Margin="14,0,0,0" FontSize="18" Foreground="#D5E6FF" />
                     </Grid>
+                </Border>
 
-                    <Border Grid.Row="3" Classes="panel-soft" Padding="12">
-                        <StackPanel Spacing="8">
-                            <TextBlock Name="FeedbackText" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
-                            <TextBlock Name="RewardMessageText" HorizontalAlignment="Center" TextWrapping="Wrap" />
-                            <TextBlock Name="AlertText" FontSize="13" Foreground="#EAA43C" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
+                <Border Canvas.Left="60"
+                        Canvas.Top="250"
+                        Width="720"
+                        Height="430"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        ClipToBounds="True"
+                        Padding="24,20">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto" RowSpacing="8" ClipToBounds="True">
+                        <TextBlock Text="MINING TERMINAL" FontSize="14" FontWeight="SemiBold" Opacity="0.8" Foreground="#AEE9FF" />
 
-                    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-                        <Button Name="MonitorSubmitButton" Width="120" Classes="shop" Content="Submit" />
-                        <Button Name="SaveButton" Width="96" Classes="shop" Content="Save" />
-                        <Button Name="LoadButton" Width="96" Classes="shop" Content="Load" />
+                        <TextBlock Name="ChallengePromptText"
+                                   Grid.Row="1"
+                                   Classes="mono"
+                                   FontSize="40"
+                                   FontWeight="Bold"
+                                   Foreground="#F1FAFF"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"
+                                   MaxLines="2"
+                                   TextTrimming="WordEllipsis" />
+
+                        <TextBlock Name="ChallengeDifficultyText"
+                                   Grid.Row="2"
+                                   FontSize="20"
+                                   Foreground="#BEE1FF"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxLines="1"
+                                   TextTrimming="WordEllipsis" />
+
+                        <TextBox Name="MonitorAnswerBox"
+                                 Grid.Row="3"
+                                 Classes="mono"
+                                   FontSize="28"
+                                   Height="56"
+                                 HorizontalContentAlignment="Center"
+                                 PlaceholderText="Type answer and press Enter"
+                                 Background="#F5FBFF"
+                                 Foreground="#0C1720"
+                                 BorderBrush="#77D9FF"
+                                 BorderThickness="2"
+                                 CornerRadius="6" />
+
+                        <TextBlock Name="FeedbackText"
+                                   Grid.Row="4"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#D7F2FF"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   TextTrimming="WordEllipsis"
+                                   VerticalAlignment="Center" />
+
+                        <TextBlock Name="RewardMessageText"
+                                   Grid.Row="5"
+                                   FontSize="16"
+                                   Foreground="#D7F2FF"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxLines="1"
+                                   TextTrimming="WordEllipsis" />
+
+                        <TextBlock Name="AlertText"
+                                   Grid.Row="6"
+                                   FontSize="14"
+                                   Foreground="#F5C56E"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxLines="2"
+                                   TextTrimming="WordEllipsis" />
+                    </Grid>
+                </Border>
+
+                <Button Name="SmartphoneButton"
+                        Canvas.Left="1346"
+                        Canvas.Top="598"
+                        Width="184"
+                        Height="44"
+                        Content="Open Exchange" />
+
+                <Border Canvas.Left="80"
+                        Canvas.Top="724"
+                        Width="590"
+                        Padding="14"
+                        CornerRadius="10"
+                        Background="#C9151A22"
+                        BorderBrush="#4DD7ECFF"
+                        BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Utility Controls" FontSize="14" FontWeight="SemiBold" Foreground="#CFE8FF" Opacity="0.9" />
+                        <WrapPanel Orientation="Horizontal">
+                            <Button Name="MonkeyButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                            <Button Name="YouthButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                            <Button Name="GpuButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                            <Button Name="ManualUpgradeButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                            <Button Name="EfficiencyUpgradeButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                            <Button Name="MarketUpgradeButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                            <Button Name="SpaceshipButton" Width="182" Height="34" HorizontalAlignment="Left" />
+                        </WrapPanel>
                     </StackPanel>
-                </Grid>
-            </Border>
-
-            <Border Grid.Column="1" Classes="panel" Padding="14">
-                <Grid RowDefinitions="Auto,*,*,Auto" RowSpacing="10">
-                    <TextBlock Classes="title" Text="Economy and Upgrades" />
-
-                    <Border Grid.Row="1" Classes="panel-soft" Padding="10">
-                        <StackPanel Spacing="8">
-                            <TextBlock FontSize="16" FontWeight="SemiBold" Text="Auto-Miners" />
-                            <Button Name="MonkeyButton" Classes="shop" />
-                            <Button Name="YouthButton" Classes="shop" />
-                            <Button Name="GpuButton" Classes="shop" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="2" Classes="panel-soft" Padding="10">
-                        <StackPanel Spacing="8">
-                            <TextBlock FontSize="16" FontWeight="SemiBold" Text="Upgrades" />
-                            <Button Name="ManualUpgradeButton" Classes="shop" />
-                            <Button Name="EfficiencyUpgradeButton" Classes="shop" />
-                            <Button Name="MarketUpgradeButton" Classes="shop" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="3" Classes="panel-soft" Padding="10">
-                        <StackPanel Spacing="8">
-                            <TextBlock FontSize="16" FontWeight="SemiBold" Text="Final Goal" />
-                            <Button Name="SpaceshipButton" Classes="shop" />
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Border>
-        </Grid>
+                </Border>
+            </Canvas>
+        </Viewbox>
 
         <Border Name="ExchangeOverlay"
-                Grid.RowSpan="2"
                 IsVisible="False"
-                Background="#99060A0D">
-            <Border Width="640" Height="420" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="panel" Padding="14">
-                <Grid RowDefinitions="Auto,170,Auto,Auto" RowSpacing="10">
+                Background="#B0091016">
+            <Border Width="760"
+                    Height="500"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#F31A212B"
+                    BorderBrush="#58D6F0FF"
+                    BorderThickness="2"
+                    CornerRadius="14"
+                    Padding="18">
+                <Grid RowDefinitions="Auto,220,Auto,Auto" RowSpacing="12">
                     <Grid ColumnDefinitions="*,Auto">
-                        <TextBlock FontSize="22" FontWeight="Bold" Text="KaiCoin Exchange" />
-                        <Button Name="CloseExchangeButton" Grid.Column="1" Width="88" Classes="shop" Content="Close" />
+                        <TextBlock FontSize="26" FontWeight="Bold" Foreground="#F3FAFF" Text="KaiCoin Exchange" />
+                        <Button Name="CloseExchangeButton" Grid.Column="1" Width="100" Height="34" Content="Close" />
                     </Grid>
 
-                    <Border Grid.Row="1" Classes="panel-soft" Padding="10">
+                    <Border Grid.Row="1" Background="#C50B1016" BorderBrush="#447EAAC8" BorderThickness="1" CornerRadius="8" Padding="10">
                         <Grid>
                             <Grid RowDefinitions="Auto,*,Auto" Margin="6,4,6,4">
-                                <TextBlock Name="ExchangeMaxPriceText" Grid.Row="0" HorizontalAlignment="Right" FontSize="12" Opacity="0.78" />
+                                <TextBlock Name="ExchangeMaxPriceText" Grid.Row="0" HorizontalAlignment="Right" FontSize="12" Opacity="0.78" Foreground="#D7EBFF" />
 
                                 <Grid Grid.Row="1">
-                                    <Border Name="ExchangeGuideTop"
-                                            Height="1"
-                                            Background="#3AF5EEE4"
-                                            VerticalAlignment="Top"
-                                            IsVisible="False" />
-                                    <Border Name="ExchangeGuideMid"
-                                            Height="1"
-                                            Background="#2AF5EEE4"
-                                            VerticalAlignment="Center"
-                                            IsVisible="False" />
-                                    <Border Name="ExchangeGuideBottom"
-                                            Height="1"
-                                            Background="#3AF5EEE4"
-                                            VerticalAlignment="Bottom"
-                                            IsVisible="False" />
+                                    <Border Name="ExchangeGuideTop" Height="1" Background="#3AF5EEE4" VerticalAlignment="Top" IsVisible="False" />
+                                    <Border Name="ExchangeGuideMid" Height="1" Background="#2AF5EEE4" VerticalAlignment="Center" IsVisible="False" />
+                                    <Border Name="ExchangeGuideBottom" Height="1" Background="#3AF5EEE4" VerticalAlignment="Bottom" IsVisible="False" />
                                 </Grid>
 
-                                <TextBlock Name="ExchangeMinPriceText" Grid.Row="2" HorizontalAlignment="Right" FontSize="12" Opacity="0.78" />
+                                <TextBlock Name="ExchangeMinPriceText" Grid.Row="2" HorizontalAlignment="Right" FontSize="12" Opacity="0.78" Foreground="#D7EBFF" />
                             </Grid>
 
                             <Polyline Name="ExchangePricePolyline"
@@ -129,27 +181,33 @@
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
                                        Opacity="0.78"
+                                       Foreground="#E1F0FF"
                                        IsVisible="True" />
                         </Grid>
                     </Border>
 
                     <Grid Grid.Row="2" ColumnDefinitions="2*,Auto,Auto" ColumnSpacing="8">
                         <TextBox Name="SellQuantityBox" Classes="mono" FontSize="18" PlaceholderText="Sell quantity" />
-                        <Button Name="SellButton" Grid.Column="1" Width="110" Classes="shop" Content="Sell" />
+                        <Button Name="SellButton" Grid.Column="1" Width="110" Content="Sell" />
                         <TextBlock Name="ExchangeHintText" Grid.Column="2" VerticalAlignment="Center" Foreground="#EAA43C" />
                     </Grid>
 
-                    <TextBlock Grid.Row="3" Text="Numeric keys route here while this modal is open. Enter sells." Opacity="0.8" />
+                    <TextBlock Grid.Row="3" Text="Numeric keys route here while this modal is open. Enter sells." Opacity="0.8" Foreground="#CCE2F6" />
                 </Grid>
             </Border>
         </Border>
 
         <Border Name="LaunchOverlay"
-                Grid.RowSpan="2"
                 IsVisible="False"
-                Background="#AA020304">
+                Background="#BF030506">
             <Grid>
-                <TextBlock Name="LaunchMessageText" FontSize="30" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,120" />
+                <TextBlock Name="LaunchMessageText"
+                           FontSize="36"
+                           FontWeight="Bold"
+                           Foreground="#F6FAFF"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,140" />
                 <Border Name="RocketVisual"
                         Width="70"
                         Height="130"

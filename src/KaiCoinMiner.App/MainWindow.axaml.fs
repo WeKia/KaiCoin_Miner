@@ -4,6 +4,7 @@ open Avalonia
 open Avalonia.Controls
 open Avalonia.Controls.Shapes
 open Avalonia.Input
+open Avalonia.Layout
 open Avalonia.Markup.Xaml
 open Avalonia.Media
 open Avalonia.Threading
@@ -46,10 +47,6 @@ type MainWindow () as this =
     let feedbackText = lazy (this.FindControl<TextBlock>("FeedbackText"))
     let rewardMessageText = lazy (this.FindControl<TextBlock>("RewardMessageText"))
     let alertText = lazy (this.FindControl<TextBlock>("AlertText"))
-    let monitorSubmitButton = lazy (this.FindControl<Button>("MonitorSubmitButton"))
-    let saveButton = lazy (this.FindControl<Button>("SaveButton"))
-    let loadButton = lazy (this.FindControl<Button>("LoadButton"))
-
     let monkeyButton = lazy (this.FindControl<Button>("MonkeyButton"))
     let youthButton = lazy (this.FindControl<Button>("YouthButton"))
     let gpuButton = lazy (this.FindControl<Button>("GpuButton"))
@@ -90,6 +87,41 @@ type MainWindow () as this =
         let status = if isAffordable then "READY" else "LOCKED"
         button.Content <- $"{content} | {status}"
         button.Foreground <- if isAffordable then greenBrush else redBrush
+        ToolTip.SetTip(button, tooltip)
+
+    let setListButtonStyle (button: Button) isAffordable label owned nextCost unitLabel tooltip =
+        let content = Shell.formatListRowContent label owned nextCost unitLabel
+        setButtonStyle button isAffordable content tooltip
+
+    let setUpgradeTileButtonStyle (button: Button) isAffordable label level nextCostCash tooltip =
+        let tile = Shell.describeUpgradeTile label level nextCostCash isAffordable
+        let affordabilityBrush = if isAffordable then greenBrush else redBrush
+
+        let headerText =
+            TextBlock(
+                Text = tile.Header,
+                FontWeight = FontWeight.SemiBold,
+                TextWrapping = TextWrapping.Wrap)
+
+        let detailsText =
+            TextBlock(
+                Text = $"{tile.LevelText} | {tile.CostText}",
+                TextWrapping = TextWrapping.Wrap,
+                Opacity = 0.9)
+
+        let statusText =
+            TextBlock(
+                Text = tile.StatusText,
+                FontWeight = FontWeight.Bold,
+                HorizontalAlignment = HorizontalAlignment.Right)
+
+        let content = StackPanel(Spacing = 3.0)
+        content.Children.Add(headerText) |> ignore
+        content.Children.Add(detailsText) |> ignore
+        content.Children.Add(statusText) |> ignore
+
+        button.Content <- content
+        button.Foreground <- affordabilityBrush
         ToolTip.SetTip(button, tooltip)
 
     let renderTicker (items: string list) =
@@ -216,7 +248,6 @@ type MainWindow () as this =
         closeExchangeButton.Value.Click.Add(fun _ ->
             dispatch (Msg.SetExchangeModalOpen false))
 
-        monitorSubmitButton.Value.Click.Add(fun _ -> submitMonitorAnswer ())
         sellButton.Value.Click.Add(fun _ -> submitExchangeSell ())
 
         monkeyButton.Value.Click.Add(fun _ -> dispatch (Msg.BuyAutoMiner AutoMinerKind.Monkey))
@@ -226,9 +257,6 @@ type MainWindow () as this =
         efficiencyUpgradeButton.Value.Click.Add(fun _ -> dispatch (Msg.BuyUpgrade UpgradeKind.AutoMinerEfficiency))
         marketUpgradeButton.Value.Click.Add(fun _ -> dispatch (Msg.BuyUpgrade UpgradeKind.MarketAnalysis))
         spaceshipButton.Value.Click.Add(fun _ -> dispatch Msg.BuySpaceshipToMars)
-        saveButton.Value.Click.Add(fun _ -> dispatch Msg.SaveRequested)
-        loadButton.Value.Click.Add(fun _ -> dispatch Msg.LoadRequested)
-
         this.KeyDown.Add(onGlobalKeyDown)
 
         timer.Tick.Add(fun _ -> onWindowTick ())
@@ -284,22 +312,31 @@ type MainWindow () as this =
         let youthDesc = ShopCatalog.autoMinerDescriptors[AutoMinerKind.RestingYouth]
         let gpuDesc = ShopCatalog.autoMinerDescriptors[AutoMinerKind.Gpu]
 
-        setButtonStyle
+        setListButtonStyle
             monkeyButton.Value
             (Shop.canAffordAutoMiner AutoMinerKind.Monkey state)
-            ($"{monkeyDesc.Label} | Owned {monkey.Owned} | Next {monkey.NextCostCoins:F2} KC")
+            monkeyDesc.Label
+            monkey.Owned
+            monkey.NextCostCoins
+            "KC"
             ($"{monkeyDesc.Specs}\n{monkeyDesc.WittyDescription}")
 
-        setButtonStyle
+        setListButtonStyle
             youthButton.Value
             (Shop.canAffordAutoMiner AutoMinerKind.RestingYouth state)
-            ($"{youthDesc.Label} | Owned {youth.Owned} | Next {youth.NextCostCoins:F2} KC")
+            youthDesc.Label
+            youth.Owned
+            youth.NextCostCoins
+            "KC"
             ($"{youthDesc.Specs}\n{youthDesc.WittyDescription}")
 
-        setButtonStyle
+        setListButtonStyle
             gpuButton.Value
             (Shop.canAffordAutoMiner AutoMinerKind.Gpu state)
-            ($"{gpuDesc.Label} | Owned {gpu.Owned} | Next {gpu.NextCostCoins:F2} KC")
+            gpuDesc.Label
+            gpu.Owned
+            gpu.NextCostCoins
+            "KC"
             ($"{gpuDesc.Specs}\n{gpuDesc.WittyDescription}")
 
         let manualUpgrade = state.Upgrades[UpgradeKind.ManualDifficultyReduction]
@@ -310,22 +347,28 @@ type MainWindow () as this =
         let efficiencyDesc = ShopCatalog.upgradeDescriptors[UpgradeKind.AutoMinerEfficiency]
         let marketDesc = ShopCatalog.upgradeDescriptors[UpgradeKind.MarketAnalysis]
 
-        setButtonStyle
+        setUpgradeTileButtonStyle
             manualUpgradeButton.Value
             (Shop.canAffordUpgrade UpgradeKind.ManualDifficultyReduction state)
-            ($"{manualDesc.Label} | Lv {manualUpgrade.Level} | Next ${manualUpgrade.NextCostCash:F2}")
+            manualDesc.Label
+            manualUpgrade.Level
+            manualUpgrade.NextCostCash
             ($"{manualDesc.Specs}\n{manualDesc.WittyDescription}")
 
-        setButtonStyle
+        setUpgradeTileButtonStyle
             efficiencyUpgradeButton.Value
             (Shop.canAffordUpgrade UpgradeKind.AutoMinerEfficiency state)
-            ($"{efficiencyDesc.Label} | Lv {efficiencyUpgrade.Level} | Next ${efficiencyUpgrade.NextCostCash:F2}")
+            efficiencyDesc.Label
+            efficiencyUpgrade.Level
+            efficiencyUpgrade.NextCostCash
             ($"{efficiencyDesc.Specs}\n{efficiencyDesc.WittyDescription}")
 
-        setButtonStyle
+        setUpgradeTileButtonStyle
             marketUpgradeButton.Value
             (Shop.canAffordUpgrade UpgradeKind.MarketAnalysis state)
-            ($"{marketDesc.Label} | Lv {marketUpgrade.Level} | Next ${marketUpgrade.NextCostCash:F2}")
+            marketDesc.Label
+            marketUpgrade.Level
+            marketUpgrade.NextCostCash
             ($"{marketDesc.Specs}\n{marketDesc.WittyDescription}")
 
         let canLaunch = Shop.canBuySpaceshipToMars state
