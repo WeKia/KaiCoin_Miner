@@ -5,64 +5,10 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="40,30,40,30">
                 <TextBlock Grid.Row="0" Text="MINER SHOP" FontSize="32" FontWeight="Bold" Foreground="#E8F2F6" HorizontalAlignment="Center" Margin="0,0,0,20" />
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="0,0,0,16">
-                    <Button Name="ShopManualButton" Width="80" Height="80">
-                        <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Width="80" Height="80" Padding="4">
-                            <TextBlock Text="🧮" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </Button>
-                    <Button Name="ShopEfficiencyButton" Width="80" Height="80">
-                        <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Width="80" Height="80" Padding="4">
-                            <TextBlock Text="❄️" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </Button>
-                    <Button Name="ShopMarketButton" Width="80" Height="80">
-                        <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Width="80" Height="80" Padding="4">
-                            <TextBlock Text="📊" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </Button>
-                </StackPanel>
+                <StackPanel Grid.Row="1" Name="UpgradesPanel" Orientation="Horizontal" Spacing="12" Margin="0,0,0,16" />
                 <Border Grid.Row="2" Height="2" Background="#2D4C5D" Margin="0,0,0,16" />
-                <StackPanel Grid.Row="3" Spacing="12" Margin="0,0,0,16" MinHeight="420">
-                    <Button Name="ShopMonkeyButton" HorizontalAlignment="Stretch" MinHeight="120">
-                        <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Padding="12,8" HorizontalAlignment="Stretch">
-                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
-                                <TextBlock Grid.Column="0" Text="🐵" FontSize="28" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Name="ShopMonkeyLabel" FontSize="16" FontWeight="SemiBold" Foreground="#E8F2F6" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" Name="ShopMonkeyCost" FontSize="14" Foreground="#AEE9FF" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="3" Text="BUY" FontSize="14" FontWeight="Bold" Foreground="#25C47A" VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                    </Button>
-                    <Button Name="ShopYouthButton" HorizontalAlignment="Stretch">
-                        <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Padding="12,8" HorizontalAlignment="Stretch">
-                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
-                                <TextBlock Grid.Column="0" Text="😴" FontSize="28" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Name="ShopYouthLabel" FontSize="16" FontWeight="SemiBold" Foreground="#E8F2F6" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" Name="ShopYouthCost" FontSize="14" Foreground="#AEE9FF" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="3" Text="BUY" FontSize="14" FontWeight="Bold" Foreground="#25C47A" VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                    </Button>
-                    <Button Name="ShopGpuButton" HorizontalAlignment="Stretch">
-                        <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Padding="12,8" HorizontalAlignment="Stretch">
-                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
-                                <TextBlock Grid.Column="0" Text="🎮" FontSize="28" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="1" Name="ShopGpuLabel" FontSize="16" FontWeight="SemiBold" Foreground="#E8F2F6" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" Name="ShopGpuCost" FontSize="14" Foreground="#AEE9FF" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="3" Text="BUY" FontSize="14" FontWeight="Bold" Foreground="#25C47A" VerticalAlignment="Center" />
-                            </Grid>
-                        </Border>
-                    </Button>
-                </StackPanel>
-                <Button Name="ShopSpaceshipButton" Grid.Row="4" HorizontalAlignment="Center">
-                    <Border Background="#14232F" BorderBrush="#2D4C5D" BorderThickness="2" CornerRadius="4" Width="260" Height="200" Padding="8">
-                        <Grid RowDefinitions="*,Auto">
-                            <TextBlock Grid.Row="0" Text="🚀" FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            <TextBlock Grid.Row="1" Name="ShopSpaceshipLabel" FontSize="14" FontWeight="SemiBold" Foreground="#E8F2F6" TextAlignment="Center" />
-                        </Grid>
-                    </Border>
-                </Button>
+                <StackPanel Grid.Row="3" Name="AutoMinersPanel" Spacing="12" Margin="0,0,0,16" MinHeight="420" />
+                <StackPanel Grid.Row="4" Name="FinalItemsPanel" HorizontalAlignment="Center" />
             </Grid>
         </ScrollViewer>
     </Border>

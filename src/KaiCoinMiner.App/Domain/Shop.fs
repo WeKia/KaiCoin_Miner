@@ -18,17 +18,25 @@ module Shop =
     let private roundCurrency (value: decimal) =
         Decimal.Round(value, 2, MidpointRounding.AwayFromZero)
 
+    let private autoMinerGrowthRates =
+        Map.ofList [
+            AutoMinerKind.Monkey, 1.15m
+            AutoMinerKind.RestingYouth, 1.18m
+            AutoMinerKind.Gpu, 1.22m
+        ]
+
+    let private upgradeGrowthRates =
+        Map.ofList [
+            UpgradeKind.ManualDifficultyReduction, 1.45m
+            UpgradeKind.AutoMinerEfficiency, 1.55m
+            UpgradeKind.MarketAnalysis, 1.6m
+        ]
+
     let private autoMinerGrowth kind =
-        match kind with
-        | AutoMinerKind.Monkey -> 1.15m
-        | AutoMinerKind.RestingYouth -> 1.18m
-        | AutoMinerKind.Gpu -> 1.22m
+        Map.tryFind kind autoMinerGrowthRates |> Option.defaultValue 1.2m
 
     let private upgradeGrowth kind =
-        match kind with
-        | UpgradeKind.ManualDifficultyReduction -> 1.45m
-        | UpgradeKind.AutoMinerEfficiency -> 1.55m
-        | UpgradeKind.MarketAnalysis -> 1.6m
+        Map.tryFind kind upgradeGrowthRates |> Option.defaultValue 1.5m
 
     let autoMinerNextCost kind (state: GameState) =
         state.AutoMiners

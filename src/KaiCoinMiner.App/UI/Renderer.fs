@@ -8,22 +8,6 @@ open Avalonia.Media
 open KaiCoinMiner.App.Domain
 open KaiCoinMiner.App.Views
 
-type ShopControlRefs =
-    { MonkeyButton: Button
-      YouthButton: Button
-      GpuButton: Button
-      ManualButton: Button
-      EfficiencyButton: Button
-      MarketButton: Button
-      SpaceshipButton: Button
-      MonkeyLabel: TextBlock
-      YouthLabel: TextBlock
-      GpuLabel: TextBlock
-      MonkeyCost: TextBlock
-      YouthCost: TextBlock
-      GpuCost: TextBlock
-      SpaceshipLabel: TextBlock }
-
 module Renderer =
     let greenBrush = SolidColorBrush(Color.Parse("#25C47A"))
     let redBrush = SolidColorBrush(Color.Parse("#D04C4C"))
@@ -104,46 +88,4 @@ module Renderer =
         minPriceText.Text <- chartContext.MinPrice |> Option.map (fun p -> $"Min ${p:F3}") |> Option.defaultValue ""
         maxPriceText.Text <- chartContext.MaxPrice |> Option.map (fun p -> $"Max ${p:F3}") |> Option.defaultValue ""
 
-    let refreshShop (refs: ShopControlRefs) (state: GameState) =
-        let monkey = state.AutoMiners[AutoMinerKind.Monkey]
-        let youth = state.AutoMiners[AutoMinerKind.RestingYouth]
-        let gpu = state.AutoMiners[AutoMinerKind.Gpu]
 
-        let monkeyDesc = ShopCatalog.autoMinerDescriptors[AutoMinerKind.Monkey]
-        let youthDesc = ShopCatalog.autoMinerDescriptors[AutoMinerKind.RestingYouth]
-        let gpuDesc = ShopCatalog.autoMinerDescriptors[AutoMinerKind.Gpu]
-
-        let manualUpgrade = state.Upgrades[UpgradeKind.ManualDifficultyReduction]
-        let efficiencyUpgrade = state.Upgrades[UpgradeKind.AutoMinerEfficiency]
-        let marketUpgrade = state.Upgrades[UpgradeKind.MarketAnalysis]
-
-        let manualDesc = ShopCatalog.upgradeDescriptors[UpgradeKind.ManualDifficultyReduction]
-        let efficiencyDesc = ShopCatalog.upgradeDescriptors[UpgradeKind.AutoMinerEfficiency]
-        let marketDesc = ShopCatalog.upgradeDescriptors[UpgradeKind.MarketAnalysis]
-
-        let finalDesc = ShopCatalog.spaceshipDescriptor
-
-        refs.MonkeyLabel.Text <- $"{monkeyDesc.Label} ({monkey.Owned})"
-        refs.MonkeyCost.Text <- $"{monkey.NextCostCoins} KC"
-        ToolTip.SetTip(refs.MonkeyButton, $"{monkeyDesc.Specs}\n{monkeyDesc.WittyDescription}")
-
-        refs.YouthLabel.Text <- $"{youthDesc.Label} ({youth.Owned})"
-        refs.YouthCost.Text <- $"{youth.NextCostCoins} KC"
-        ToolTip.SetTip(refs.YouthButton, $"{youthDesc.Specs}\n{youthDesc.WittyDescription}")
-
-        refs.GpuLabel.Text <- $"{gpuDesc.Label} ({gpu.Owned})"
-        refs.GpuCost.Text <- $"{gpu.NextCostCoins} KC"
-        ToolTip.SetTip(refs.GpuButton, $"{gpuDesc.Specs}\n{gpuDesc.WittyDescription}")
-
-        ToolTip.SetTip(refs.ManualButton, $"{manualDesc.Label} (Lv.{manualUpgrade.Level})\n{manualDesc.Specs}\n{manualDesc.WittyDescription}\nCost: ${manualUpgrade.NextCostCash}")
-        ToolTip.SetTip(refs.EfficiencyButton, $"{efficiencyDesc.Label} (Lv.{efficiencyUpgrade.Level})\n{efficiencyDesc.Specs}\n{efficiencyDesc.WittyDescription}\nCost: ${efficiencyUpgrade.NextCostCash}")
-        ToolTip.SetTip(refs.MarketButton, $"{marketDesc.Label} (Lv.{marketUpgrade.Level})\n{marketDesc.Specs}\n{marketDesc.WittyDescription}\nCost: ${marketUpgrade.NextCostCash}")
-
-        let shopSpaceshipText =
-            match state.WinState with
-            | WinState.NotWon -> $"{finalDesc.Label}"
-            | WinState.Launching -> "Launching..."
-            | WinState.Won -> "Mission Complete"
-
-        refs.SpaceshipLabel.Text <- shopSpaceshipText
-        ToolTip.SetTip(refs.SpaceshipButton, $"{finalDesc.Specs}\n{finalDesc.WittyDescription}")
