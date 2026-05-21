@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="KaiCoinMiner.App.Views.ExchangeView">
+    <Border Background="#B0091016">
+        <Border Width="760"
+                Height="500"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="#F31A212B"
+                BorderBrush="#58D6F0FF"
+                BorderThickness="2"
+                CornerRadius="14"
+                Padding="18">
+            <Grid RowDefinitions="Auto,220,Auto,Auto" RowSpacing="12">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="#F3FAFF" Text="KaiCoin Exchange" />
+                    <Button Name="CloseExchangeButton" Grid.Column="1" Width="100" Height="34" Content="Close" />
+                </Grid>
+
+                <Border Grid.Row="1" Background="#C50B1016" BorderBrush="#447EAAC8" BorderThickness="1" CornerRadius="8" Padding="10">
+                    <Grid>
+                        <Grid RowDefinitions="Auto,*,Auto" Margin="6,4,6,4">
+                            <TextBlock Name="ExchangeMaxPriceText" Grid.Row="0" HorizontalAlignment="Right" FontSize="12" Opacity="0.78" Foreground="#D7EBFF" />
+
+                            <Grid Grid.Row="1">
+                                <Border Name="ExchangeGuideTop" Height="1" Background="#3AF5EEE4" VerticalAlignment="Top" IsVisible="False" />
+                                <Border Name="ExchangeGuideMid" Height="1" Background="#2AF5EEE4" VerticalAlignment="Center" IsVisible="False" />
+                                <Border Name="ExchangeGuideBottom" Height="1" Background="#3AF5EEE4" VerticalAlignment="Bottom" IsVisible="False" />
+                            </Grid>
+
+                            <TextBlock Name="ExchangeMinPriceText" Grid.Row="2" HorizontalAlignment="Right" FontSize="12" Opacity="0.78" Foreground="#D7EBFF" />
+                        </Grid>
+
+                        <Polyline Name="ExchangePricePolyline"
+                                  Stroke="#4FD0C9"
+                                  StrokeThickness="2"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch" />
+
+                        <TextBlock Name="ExchangeChartPlaceholder"
+                                   Text="Collect at least 2 price points to render the chart"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Opacity="0.78"
+                                   Foreground="#E1F0FF"
+                                   IsVisible="True" />
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="2" ColumnDefinitions="2*,Auto,Auto" ColumnSpacing="8">
+                    <TextBox Name="SellQuantityBox" Classes="mono" FontSize="18" PlaceholderText="Sell quantity" />
+                    <Button Name="SellButton" Grid.Column="1" Width="110" Content="Sell" />
+                    <TextBlock Name="ExchangeHintText" Grid.Column="2" VerticalAlignment="Center" Foreground="#EAA43C" />
+                </Grid>
+
+                <TextBlock Grid.Row="3" Text="Numeric keys route here while this modal is open. Enter sells." Opacity="0.8" Foreground="#CCE2F6" />
+            </Grid>
+        </Border>
+    </Border>
+</UserControl>

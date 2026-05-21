@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="KaiCoinMiner.App.Views.ChallengeView">
+    <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0" ClipToBounds="True" Padding="24,20">
+        <Grid RowDefinitions="Auto,Auto" RowSpacing="8" VerticalAlignment="Center" ClipToBounds="True">
+            <TextBlock Name="ChallengePromptText"
+                       Classes="mono"
+                       FontSize="80"
+                       FontWeight="Bold"
+                       Foreground="#F1FAFF"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       MaxLines="2"
+                       TextTrimming="WordEllipsis" />
+            <TextBlock Name="MonitorInputText"
+                       Grid.Row="1"
+                       Classes="mono"
+                       FontSize="40"
+                       FontWeight="SemiBold"
+                       Foreground="#AEE9FF"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       MaxLines="1"
+                       TextTrimming="WordEllipsis" />
+        </Grid>
+    </Border>
+</UserControl>

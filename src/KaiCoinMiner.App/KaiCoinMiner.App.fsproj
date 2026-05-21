@@ -5,7 +5,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <RuntimeIdentifiers>win-x64;osx-arm64;linux-x64</RuntimeIdentifiers>
-    <SelfContained>true</SelfContained>
+    <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
@@ -23,8 +23,16 @@
     <Compile Include="Domain\Msg.fs" />
     <Compile Include="Domain\Update.fs" />
     <Compile Include="UI\Shell.fs" />
-    <Compile Include="UI\Interactions.fs" />
     <Compile Include="Views\ShopCatalog.fs" />
+    <Compile Include="UI\Renderer.fs" />
+    <Compile Include="UI\Animations.fs" />
+    <Compile Include="UI\Input.fs" />
+    <Compile Include="UI\Interactions.fs" />
+    <Compile Include="Views\HeaderView.axaml.fs" />
+    <Compile Include="Views\ChallengeView.axaml.fs" />
+    <Compile Include="Views\ShopView.axaml.fs" />
+    <Compile Include="Views\ExchangeView.axaml.fs" />
+    <Compile Include="Views\LaunchView.axaml.fs" />
     <Compile Include="Infrastructure\Save.fs" />
     <Compile Include="MainWindow.axaml.fs" />
     <Compile Include="App.axaml.fs"/>

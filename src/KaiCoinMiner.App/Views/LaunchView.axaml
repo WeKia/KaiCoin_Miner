@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="KaiCoinMiner.App.Views.LaunchView">
+    <Border Background="#BF030506">
+        <Grid>
+            <TextBlock Name="LaunchMessageText"
+                       FontSize="36"
+                       FontWeight="Bold"
+                       Foreground="#F6FAFF"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,140" />
+            <Border Name="RocketVisual"
+                    Width="70"
+                    Height="130"
+                    CornerRadius="20"
+                    Background="#EBE9D7"
+                    BorderBrush="#364655"
+                    BorderThickness="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,20" />
+        </Grid>
+    </Border>
+</UserControl>
