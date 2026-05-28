@@ -45,9 +45,6 @@ type MainWindow () as this =
         for effect in effects do
             match effect with
             | Update.Effect.SaveState ->
-                let saveDir = Path.GetDirectoryName(savePath)
-                if not (String.IsNullOrWhiteSpace(saveDir)) then
-                    Directory.CreateDirectory(saveDir) |> ignore
                 Save.save savePath state
             | Update.Effect.LoadState ->
                 dispatch (Msg.Loaded (Save.tryLoad savePath))

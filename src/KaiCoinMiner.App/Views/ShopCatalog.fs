@@ -9,49 +9,50 @@ type ShopDescriptor =
       WittyDescription: string }
 
 module ShopCatalog =
+    let private config () = GameConfig.ensureLoaded ()
+
     let autoMinerDescriptors =
-        Map.ofList [
-            AutoMinerKind.Monkey,
-            { Label = "Monkey"
-              Emoji = "🐵"
-              Specs = "Output: 0.1 KaiCoin/sec"
-              WittyDescription = "Keeps mining even while you stare at math." }
-            AutoMinerKind.RestingYouth,
-            { Label = "Resting Youth"
-              Emoji = "😴"
-              Specs = "Output: 1 KaiCoin/sec"
-              WittyDescription = "Power naps, passive gains, zero regrets." }
-            AutoMinerKind.Gpu,
-            { Label = "GPU"
-              Emoji = "🎮"
-              Specs = "Output: 10 KaiCoin/sec"
-              WittyDescription = "Runs hot, prints coins, terrifies your electric bill." }
-        ]
+        let cfg = config ()
+        cfg.AutoMiners
+        |> Map.map (fun key c ->
+            { Label = c.Label
+              Emoji = c.Emoji
+              Specs = $"Output: {c.OutputPerSecond} KaiCoin/sec"
+              WittyDescription = c.Description })
 
     let upgradeDescriptors =
-        Map.ofList [
-            UpgradeKind.ManualDifficultyReduction,
-            { Label = "Calculator Patch"
-              Emoji = "🧮"
-              Specs = "Lowers manual challenge difficulty"
-              WittyDescription = "Makes your brain look overclocked." }
-            UpgradeKind.AutoMinerEfficiency,
-            { Label = "Cooling Upgrade"
-              Emoji = "❄️"
-              Specs = "+25% auto-miner output per level"
-              WittyDescription = "Because melted fans mine nothing." }
-            UpgradeKind.MarketAnalysis,
-            { Label = "Insider Spreadsheet"
-              Emoji = "📊"
-              Specs = "Reduces random market volatility"
-              WittyDescription = "A very legal amount of market foresight." }
-        ]
+        let cfg = config ()
+        cfg.Upgrades
+        |> Map.map (fun key c ->
+            let specs =
+                match c.EffectType with
+                | "autoMinerEfficiency" -> $"+{c.EffectPerLevel * 100m}%% auto-miner output per level"
+                | _ -> c.Description
+            { Label = c.Label
+              Emoji = c.Emoji
+              Specs = specs
+              WittyDescription = c.Description })
 
     let spaceshipDescriptor =
         { Label = Shop.spaceshipToMars.Name
           Emoji = "🚀"
-          Specs = $"Cost: ${Shop.spaceshipToMars.CostCash}"
+          Specs = $"Cost: ${Shop.spaceshipCost ()}"
           WittyDescription = "From dorm room miner to Martian legend." }
 
-    let autoMinerList = Map.toList autoMinerDescriptors
-    let upgradeList = Map.toList upgradeDescriptors
+    let autoMinerList =
+        let cfg = config ()
+        autoMinerDescriptors
+        |> Map.toList
+        |> List.sortBy (fun (key, _) ->
+            GameConfig.tryGetAutoMiner key cfg
+            |> Option.map (fun c -> c.InitialCost)
+            |> Option.defaultValue 0m)
+
+    let upgradeList =
+        let cfg = config ()
+        upgradeDescriptors
+        |> Map.toList
+        |> List.sortBy (fun (key, _) ->
+            GameConfig.tryGetUpgrade key cfg
+            |> Option.map (fun c -> c.InitialCost)
+            |> Option.defaultValue 0m)
