@@ -14,6 +14,11 @@ module Charts =
     let private clamp count value =
         if value < 1 then 1 else min count value
 
+    let private selectPoints requestedPoints (state: GameState) =
+        let source = state.Chart |> List.rev
+        let count = clamp source.Length requestedPoints
+        source |> List.rev |> List.truncate count |> List.rev
+
     let appendPricePoint tick price (state: GameState) =
         let point =
             { Tick = tick
@@ -22,9 +27,7 @@ module Charts =
         { state with Chart = point :: state.Chart |> List.truncate maxPoints }
 
     let toRenderPoints width height requestedPoints (state: GameState) =
-        let source = state.Chart |> List.rev
-        let count = clamp source.Length requestedPoints
-        let selected = source |> List.rev |> List.truncate count |> List.rev
+        let selected = selectPoints requestedPoints state
 
         match selected with
         | [] -> []
@@ -49,9 +52,7 @@ module Charts =
                   Price = point.Price })
 
     let describeContext requestedPoints (state: GameState) =
-        let source = state.Chart |> List.rev
-        let count = clamp source.Length requestedPoints
-        let selected = source |> List.rev |> List.truncate count |> List.rev
+        let selected = selectPoints requestedPoints state
 
         match selected with
         | _ :: _ :: _

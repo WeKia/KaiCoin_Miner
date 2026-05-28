@@ -1,5 +1,7 @@
 ﻿namespace KaiCoinMiner.App.Domain
 
+open Common
+
 type ArithmeticOperator =
     | Add
     | Subtract
@@ -15,8 +17,6 @@ type ArithmeticProblem =
       Difficulty: int }
 
 module Challenge =
-    let private positiveModulo value modulus =
-        ((value % modulus) + modulus) % modulus
 
     let private pickInRange minValue maxValue seed =
         minValue + positiveModulo seed (maxValue - minValue + 1)
