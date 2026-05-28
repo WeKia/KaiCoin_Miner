@@ -1,0 +1,71 @@
+{
+  "autoMiners": {
+    "Monkey": {
+      "outputPerSecond": 0.1,
+      "initialCost": 10.0,
+      "growthRate": 1.15,
+      "label": "Monkey",
+      "emoji": "🐵",
+      "description": "Keeps mining even while you stare at math."
+    },
+    "RestingYouth": {
+      "outputPerSecond": 1.0,
+      "initialCost": 100.0,
+      "growthRate": 1.18,
+      "label": "Resting Youth",
+      "emoji": "😴",
+      "description": "Power naps, passive gains, zero regrets."
+    },
+    "Gpu": {
+      "outputPerSecond": 10.0,
+      "initialCost": 1000.0,
+      "growthRate": 1.22,
+      "label": "GPU",
+      "emoji": "🎮",
+      "description": "Runs hot, prints coins, terrifies your electric bill."
+    },
+     "Gpu2": {
+      "outputPerSecond": 10.0,
+      "initialCost": 1000.0,
+      "growthRate": 1.22,
+      "label": "GP22U",
+      "emoji": "🎮",
+      "description": "Runs hot, prints coins, terrifies your electric bill."
+    }
+  },
+  "upgrades": {
+    "ManualDifficultyReduction": {
+      "initialCost": 100.0,
+      "growthRate": 1.45,
+      "label": "Calculator Patch",
+      "emoji": "🧮",
+      "description": "Makes your brain look overclocked.",
+      "effectType": "manualDifficultyReduction",
+      "effectPerLevel": 1
+    },
+    "AutoMinerEfficiency": {
+      "initialCost": 250.0,
+      "growthRate": 1.55,
+      "label": "Cooling Upgrade",
+      "emoji": "❄️",
+      "description": "Because melted fans mine nothing.",
+      "effectType": "autoMinerEfficiency",
+      "effectPerLevel": 0.25
+    },
+    "MarketAnalysis": {
+      "initialCost": 400.0,
+      "growthRate": 1.60,
+      "label": "Insider Spreadsheet",
+      "emoji": "📊",
+      "description": "A very legal amount of market foresight.",
+      "effectType": "marketAnalysis",
+      "effectPerLevel": 0.08
+    }
+  },
+  "global": {
+    "milestoneSize": 100.0,
+    "minCoinPrice": 0.0001,
+    "marketAnalysisMinDamp": 0.35,
+    "spaceshipCost": 250000.0
+  }
+}

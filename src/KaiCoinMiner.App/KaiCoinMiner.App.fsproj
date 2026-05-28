@@ -12,6 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Domain\Types.fs" />
+    <Compile Include="Domain\Common.fs" />
+    <Compile Include="Domain\GameConfig.fs" />
     <Compile Include="Domain\State.fs" />
     <Compile Include="Domain\Progression.fs" />
     <Compile Include="Domain\Challenge.fs" />
@@ -24,6 +27,7 @@
     <Compile Include="Domain\Update.fs" />
     <Compile Include="UI\Shell.fs" />
     <Compile Include="Views\ShopCatalog.fs" />
+    <Compile Include="UI\Theme.fs" />
     <Compile Include="UI\Renderer.fs" />
     <Compile Include="UI\Animations.fs" />
     <Compile Include="UI\Input.fs" />
@@ -52,5 +56,8 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <Content Include="Assets\config\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

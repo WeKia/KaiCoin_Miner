@@ -1,0 +1,44 @@
+{
+  "events": [
+    {
+      "headline": "Whales buy the dip",
+      "priceImpactMultiplier": 1.08,
+      "difficultyPressureDelta": 0
+    },
+    {
+      "headline": "Power grid strain hits mining farms",
+      "priceImpactMultiplier": 0.96,
+      "difficultyPressureDelta": 2
+    },
+    {
+      "headline": "Campus hackathon boosts adoption",
+      "priceImpactMultiplier": 1.05,
+      "difficultyPressureDelta": 1
+    },
+    {
+      "headline": "Regulatory rumor cools traders",
+      "priceImpactMultiplier": 0.93,
+      "difficultyPressureDelta": 3
+    },
+    {
+      "headline": "ASIC shipment delays continue",
+      "priceImpactMultiplier": 0.98,
+      "difficultyPressureDelta": 2
+    },
+    {
+      "headline": "Open-source miner patch improves yields",
+      "priceImpactMultiplier": 1.02,
+      "difficultyPressureDelta": -1
+    },
+    {
+      "headline": "Speculators rotate into KaiCoin",
+      "priceImpactMultiplier": 1.07,
+      "difficultyPressureDelta": 1
+    },
+    {
+      "headline": "Network congestion frustrates traders",
+      "priceImpactMultiplier": 0.95,
+      "difficultyPressureDelta": 1
+    }
+  ]
+}
