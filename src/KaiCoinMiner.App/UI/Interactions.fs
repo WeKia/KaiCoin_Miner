@@ -64,11 +64,11 @@ module Interactions =
             { MonitorText = monitorText
               ExchangeText = exchangeText
               SubmitTarget = None }
-          | ActiveField.Monitor, KeyboardIntent.Append '.' ->
+        | ActiveField.Monitor, KeyboardIntent.Append '.' ->
             { MonitorText = monitorText
               ExchangeText = exchangeText
               SubmitTarget = None }
-          | ActiveField.Monitor, KeyboardIntent.Append c ->
+        | ActiveField.Monitor, KeyboardIntent.Append c ->
               { MonitorText = monitorText + string c
                 ExchangeText = exchangeText
                 SubmitTarget = None }

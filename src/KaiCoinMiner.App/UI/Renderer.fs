@@ -9,14 +9,12 @@ open KaiCoinMiner.App.Domain
 open KaiCoinMiner.App.Views
 
 module Renderer =
-    let greenBrush = SolidColorBrush(Color.Parse("#25C47A"))
-    let redBrush = SolidColorBrush(Color.Parse("#D04C4C"))
     let tickerSeparator = "  ||  "
 
     let setButtonStyle (button: Button) isAffordable content tooltip =
         let status = if isAffordable then "READY" else "LOCKED"
         button.Content <- $"{content} | {status}"
-        button.Foreground <- if isAffordable then greenBrush else redBrush
+        button.Foreground <- if isAffordable then Theme.greenBrush else Theme.redBrush
         ToolTip.SetTip(button, tooltip)
 
     let setListButtonStyle (button: Button) isAffordable label owned nextCost unitLabel tooltip =
@@ -25,7 +23,7 @@ module Renderer =
 
     let setUpgradeTileButtonStyle (button: Button) isAffordable label level nextCostCash tooltip =
         let tile = Shell.describeUpgradeTile label level nextCostCash isAffordable
-        let affordabilityBrush = if isAffordable then greenBrush else redBrush
+        let affordabilityBrush = if isAffordable then Theme.greenBrush else Theme.redBrush
 
         let headerText =
             TextBlock(
