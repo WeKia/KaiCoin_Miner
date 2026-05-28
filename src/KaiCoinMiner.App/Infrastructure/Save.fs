@@ -34,32 +34,6 @@ type SaveSnapshot =
 module Save =
     let private jsonOptions = JsonSerializerOptions(WriteIndented = true)
 
-    let private autoMinerToString (kind: AutoMinerKind) : string =
-        match kind with
-        | Monkey -> "Monkey"
-        | RestingYouth -> "RestingYouth"
-        | Gpu -> "Gpu"
-
-    let private autoMinerOfString (kind: string) : AutoMinerKind option =
-        match kind with
-        | "Monkey" -> Some Monkey
-        | "RestingYouth" -> Some RestingYouth
-        | "Gpu" -> Some Gpu
-        | _ -> None
-
-    let private upgradeToString (kind: UpgradeKind) : string =
-        match kind with
-        | ManualDifficultyReduction -> "ManualDifficultyReduction"
-        | AutoMinerEfficiency -> "AutoMinerEfficiency"
-        | MarketAnalysis -> "MarketAnalysis"
-
-    let private upgradeOfString (kind: string) : UpgradeKind option =
-        match kind with
-        | "ManualDifficultyReduction" -> Some ManualDifficultyReduction
-        | "AutoMinerEfficiency" -> Some AutoMinerEfficiency
-        | "MarketAnalysis" -> Some MarketAnalysis
-        | _ -> None
-
     let private winStateToString (state: WinState) : string =
         match state with
         | NotWon -> "NotWon"
@@ -72,13 +46,13 @@ module Save =
         | "Won" -> Won
         | _ -> NotWon
 
-    let private toSavedAutoMiner ((kind, miner): AutoMinerKind * AutoMinerState) : SavedAutoMiner =
-        { Kind = autoMinerToString kind
+    let private toSavedAutoMiner ((key, miner): string * AutoMinerState) : SavedAutoMiner =
+        { Kind = key
           Owned = miner.Owned
           NextCostCoins = miner.NextCostCoins }
 
-    let private toSavedUpgrade ((kind, upgrade): UpgradeKind * UpgradeState) : SavedUpgrade =
-        { Kind = upgradeToString kind
+    let private toSavedUpgrade ((key, upgrade): string * UpgradeState) : SavedUpgrade =
+        { Kind = key
           Level = upgrade.Level
           NextCostCash = upgrade.NextCostCash }
 
@@ -141,48 +115,42 @@ module Save =
         let autoMiners =
             snapshot.AutoMiners
             |> List.fold
-                (fun (acc: Map<AutoMinerKind, AutoMinerState>) (saved: SavedAutoMiner) ->
-                    match autoMinerOfString saved.Kind with
-                    | Some kind ->
-                        match Map.tryFind kind acc with
-                        | Some (current: AutoMinerState) ->
-                            let nextCost =
-                                if saved.NextCostCoins > 0m then
-                                    saved.NextCostCoins
-                                else
-                                    current.NextCostCoins
+                (fun (acc: Map<string, AutoMinerState>) (saved: SavedAutoMiner) ->
+                    match Map.tryFind saved.Kind acc with
+                    | Some (current: AutoMinerState) ->
+                        let nextCost =
+                            if saved.NextCostCoins > 0m then
+                                saved.NextCostCoins
+                            else
+                                current.NextCostCoins
 
-                            Map.add
-                                kind
-                                { current with
-                                    Owned = max 0 saved.Owned
-                                    NextCostCoins = nextCost }
-                                acc
-                        | None -> acc
+                        Map.add
+                            saved.Kind
+                            { current with
+                                Owned = max 0 saved.Owned
+                                NextCostCoins = nextCost }
+                            acc
                     | None -> acc)
                 seeded.AutoMiners
 
         let upgrades =
             snapshot.Upgrades
             |> List.fold
-                (fun (acc: Map<UpgradeKind, UpgradeState>) (saved: SavedUpgrade) ->
-                    match upgradeOfString saved.Kind with
-                    | Some kind ->
-                        match Map.tryFind kind acc with
-                        | Some (current: UpgradeState) ->
-                            let nextCost =
-                                if saved.NextCostCash > 0m then
-                                    saved.NextCostCash
-                                else
-                                    current.NextCostCash
+                (fun (acc: Map<string, UpgradeState>) (saved: SavedUpgrade) ->
+                    match Map.tryFind saved.Kind acc with
+                    | Some (current: UpgradeState) ->
+                        let nextCost =
+                            if saved.NextCostCash > 0m then
+                                saved.NextCostCash
+                            else
+                                current.NextCostCash
 
-                            Map.add
-                                kind
-                                { current with
-                                    Level = max 0 saved.Level
-                                    NextCostCash = nextCost }
-                                acc
-                        | None -> acc
+                        Map.add
+                            saved.Kind
+                            { current with
+                                Level = max 0 saved.Level
+                                NextCostCash = nextCost }
+                            acc
                     | None -> acc)
                 seeded.Upgrades
 
