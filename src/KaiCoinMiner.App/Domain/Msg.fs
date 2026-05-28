@@ -1,4 +1,4 @@
-﻿namespace KaiCoinMiner.App.Domain
+namespace KaiCoinMiner.App.Domain
 
 open System
 
@@ -14,8 +14,8 @@ type Msg =
     | SetActiveInput of InputTarget
     | SetPendingSellQuantity of decimal
     | SellCoinsConfirmed
-    | BuyAutoMiner of AutoMinerKind
-    | BuyUpgrade of UpgradeKind
+    | BuyAutoMiner of string
+    | BuyUpgrade of string
     | BuySpaceshipToMars
     | AppendPricePoint of ChartPoint
     | SetWon of WinState

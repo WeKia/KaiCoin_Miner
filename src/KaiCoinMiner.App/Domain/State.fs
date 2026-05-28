@@ -2,29 +2,6 @@ namespace KaiCoinMiner.App.Domain
 
 open System
 
-type InputTarget =
-    | MonitorAnswer
-    | ExchangeSellQuantity
-
-type AutoMinerKind =
-    | Monkey
-    | RestingYouth
-    | Gpu
-
-type UpgradeKind =
-    | ManualDifficultyReduction
-    | AutoMinerEfficiency
-    | MarketAnalysis
-
-type ChallengeFeedback =
-  | O
-  | X
-
-type WinState =
-    | NotWon
-    | Launching
-    | Won
-
 type EconomyState =
     { Coins: decimal
       LifetimeMinedCoins: decimal
@@ -40,13 +17,13 @@ type ChallengeState =
       LastRewardMessage: string option }
 
 type AutoMinerState =
-    { Kind: AutoMinerKind
+    { Key: string
       Owned: int
       OutputPerSecond: decimal
       NextCostCoins: decimal }
 
 type UpgradeState =
-    { Kind: UpgradeKind
+    { Key: string
       Level: int
       NextCostCash: decimal }
 
@@ -74,8 +51,8 @@ type GameState =
     { IsInitialized: bool
       Economy: EconomyState
       Challenge: ChallengeState
-      AutoMiners: Map<AutoMinerKind, AutoMinerState>
-      Upgrades: Map<UpgradeKind, UpgradeState>
+      AutoMiners: Map<string, AutoMinerState>
+      Upgrades: Map<string, UpgradeState>
       Ui: UiState
       Chart: ChartPoint list
       Timer: TimerState
@@ -83,19 +60,19 @@ type GameState =
       WinState: WinState }
 
 module State =
-    let private autoMiners =
-        [ (Monkey, { Kind = Monkey; Owned = 0; OutputPerSecond = 0.1m; NextCostCoins = 10m })
-          (RestingYouth, { Kind = RestingYouth; Owned = 0; OutputPerSecond = 1m; NextCostCoins = 100m })
-          (Gpu, { Kind = Gpu; Owned = 0; OutputPerSecond = 10m; NextCostCoins = 1000m }) ]
-        |> Map.ofList
-
-    let private upgrades =
-        [ (ManualDifficultyReduction, { Kind = ManualDifficultyReduction; Level = 0; NextCostCash = 100m })
-          (AutoMinerEfficiency, { Kind = AutoMinerEfficiency; Level = 0; NextCostCash = 250m })
-          (MarketAnalysis, { Kind = MarketAnalysis; Level = 0; NextCostCash = 400m }) ]
-        |> Map.ofList
-
     let initial =
+        let config = GameConfig.ensureLoaded ()
+
+        let autoMiners =
+            config.AutoMiners
+            |> Map.map (fun key cfg ->
+                { Key = key; Owned = 0; OutputPerSecond = cfg.OutputPerSecond; NextCostCoins = cfg.InitialCost })
+
+        let upgrades =
+            config.Upgrades
+            |> Map.map (fun key cfg ->
+                { Key = key; Level = 0; NextCostCash = cfg.InitialCost })
+
         { IsInitialized = true
           Economy = { Coins = 0m; LifetimeMinedCoins = 0m; Cash = 0m; CoinPrice = 1m }
           Challenge =
