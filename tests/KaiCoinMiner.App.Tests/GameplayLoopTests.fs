@@ -8,23 +8,23 @@ let private seededState lifetimeMined reductionLevel monkeyOwned youthOwned gpuO
     let upgrades =
         State.initial.Upgrades
         |> Map.add
-            UpgradeKind.ManualDifficultyReduction
-            { State.initial.Upgrades[UpgradeKind.ManualDifficultyReduction] with
+            "ManualDifficultyReduction"
+            { State.initial.Upgrades["ManualDifficultyReduction"] with
                 Level = reductionLevel }
 
     let miners =
         State.initial.AutoMiners
         |> Map.add
-            AutoMinerKind.Monkey
-            { State.initial.AutoMiners[AutoMinerKind.Monkey] with
+            "Monkey"
+            { State.initial.AutoMiners["Monkey"] with
                 Owned = monkeyOwned }
         |> Map.add
-            AutoMinerKind.RestingYouth
-            { State.initial.AutoMiners[AutoMinerKind.RestingYouth] with
+            "RestingYouth"
+            { State.initial.AutoMiners["RestingYouth"] with
                 Owned = youthOwned }
         |> Map.add
-            AutoMinerKind.Gpu
-            { State.initial.AutoMiners[AutoMinerKind.Gpu] with
+            "Gpu"
+            { State.initial.AutoMiners["Gpu"] with
                 Owned = gpuOwned }
 
     { State.initial with

@@ -11,8 +11,8 @@ let economySystemsTests =
                 { State.initial with
                     Economy = { State.initial.Economy with Coins = 25m } }
 
-            let purchased = Shop.buyAutoMiner AutoMinerKind.Monkey seeded
-            let monkey = purchased.AutoMiners[AutoMinerKind.Monkey]
+            let purchased = Shop.buyAutoMiner "Monkey" seeded
+            let monkey = purchased.AutoMiners["Monkey"]
 
             Expect.equal purchased.Economy.Coins 15m "purchase should deduct current cost"
             Expect.equal monkey.Owned 1 "owned quantity should increment"
@@ -23,8 +23,8 @@ let economySystemsTests =
                 { State.initial with
                     Economy = { State.initial.Economy with Cash = 300m } }
 
-            let purchased = Shop.buyUpgrade UpgradeKind.AutoMinerEfficiency seeded
-            let upgrade = purchased.Upgrades[UpgradeKind.AutoMinerEfficiency]
+            let purchased = Shop.buyUpgrade "AutoMinerEfficiency" seeded
+            let upgrade = purchased.Upgrades["AutoMinerEfficiency"]
 
             Expect.equal purchased.Economy.Cash 50m "upgrade purchase should deduct current cost"
             Expect.equal upgrade.Level 1 "upgrade level should increment"
@@ -71,8 +71,8 @@ let economySystemsTests =
                     Upgrades =
                         State.initial.Upgrades
                         |> Map.add
-                            UpgradeKind.MarketAnalysis
-                            { State.initial.Upgrades[UpgradeKind.MarketAnalysis] with
+                            "MarketAnalysis"
+                            { State.initial.Upgrades["MarketAnalysis"] with
                                 Level = 5 }
                     Economy = { State.initial.Economy with CoinPrice = 10m }
                     Market = { State.initial.Market with SecondsUntilNextNews = 45m } }
@@ -129,7 +129,7 @@ let economySystemsTests =
         testCase "spaceship to mars purchase triggers launch clear hook" <| fun _ ->
             let seeded =
                 { State.initial with
-                    Economy = { State.initial.Economy with Cash = Shop.spaceshipToMars.CostCash } }
+                    Economy = { State.initial.Economy with Cash = Shop.spaceshipCost () } }
 
             let launched, didLaunch = Shop.buySpaceshipToMars seeded
 

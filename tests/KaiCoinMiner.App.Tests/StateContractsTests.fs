@@ -64,15 +64,15 @@ let saveTests =
 
             let progressed =
                 seeded
-                |> Shop.buyAutoMiner AutoMinerKind.Monkey
-                |> Shop.buyAutoMiner AutoMinerKind.Monkey
-                |> Shop.buyUpgrade UpgradeKind.AutoMinerEfficiency
+                |> Shop.buyAutoMiner "Monkey"
+                |> Shop.buyAutoMiner "Monkey"
+                |> Shop.buyUpgrade "AutoMinerEfficiency"
 
-            let monkeyBefore = progressed.AutoMiners[AutoMinerKind.Monkey]
-            let upgradeBefore = progressed.Upgrades[UpgradeKind.AutoMinerEfficiency]
+            let monkeyBefore = progressed.AutoMiners["Monkey"]
+            let upgradeBefore = progressed.Upgrades["AutoMinerEfficiency"]
             let loaded = progressed |> Save.toSnapshot |> Save.fromSnapshot
-            let monkeyAfter = loaded.AutoMiners[AutoMinerKind.Monkey]
-            let upgradeAfter = loaded.Upgrades[UpgradeKind.AutoMinerEfficiency]
+            let monkeyAfter = loaded.AutoMiners["Monkey"]
+            let upgradeAfter = loaded.Upgrades["AutoMinerEfficiency"]
 
             Expect.equal monkeyAfter.Owned monkeyBefore.Owned "owned quantity should persist"
             Expect.equal monkeyAfter.NextCostCoins monkeyBefore.NextCostCoins "auto-miner next cost should persist"
@@ -98,13 +98,13 @@ let saveTests =
                   WinState = "NotWon" }
 
             let loaded = Save.fromSnapshot legacyLikeSnapshot
-            let monkey = loaded.AutoMiners[AutoMinerKind.Monkey]
-            let autoMinerEfficiency = loaded.Upgrades[UpgradeKind.AutoMinerEfficiency]
+            let monkey = loaded.AutoMiners["Monkey"]
+            let autoMinerEfficiency = loaded.Upgrades["AutoMinerEfficiency"]
 
             Expect.equal monkey.Owned 2 "owned count should still restore"
-            Expect.equal monkey.NextCostCoins State.initial.AutoMiners[AutoMinerKind.Monkey].NextCostCoins "invalid legacy auto-miner next cost should fallback"
+            Expect.equal monkey.NextCostCoins State.initial.AutoMiners["Monkey"].NextCostCoins "invalid legacy auto-miner next cost should fallback"
             Expect.equal autoMinerEfficiency.Level 1 "upgrade level should still restore"
-            Expect.equal autoMinerEfficiency.NextCostCash State.initial.Upgrades[UpgradeKind.AutoMinerEfficiency].NextCostCash "invalid legacy upgrade next cost should fallback"
+            Expect.equal autoMinerEfficiency.NextCostCash State.initial.Upgrades["AutoMinerEfficiency"].NextCostCash "invalid legacy upgrade next cost should fallback"
 
         testCase "snapshot roundtrip preserves core economy and progression fields" <| fun _ ->
             let original =
