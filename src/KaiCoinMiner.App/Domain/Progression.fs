@@ -1,41 +1,59 @@
 ﻿namespace KaiCoinMiner.App.Domain
 
 open System
+open Common
 
 module Progression =
-    let private clampMin minimum value =
-        if value < minimum then minimum else value
 
-    let private clampIntMin minimum value =
-        if value < minimum then minimum else value
+    let private config () = GameConfig.ensureLoaded ()
 
-    let private clampInt rangeMin rangeMax value =
-        value |> max rangeMin |> min rangeMax
-
-    let milestoneSize = 100m
+    let milestoneSize =
+        (config ()).Global.MilestoneSize
 
     let difficultyFromLifetimeMined (lifetimeMinedCoins: decimal) =
         let safeLifetime = clampMin 0m lifetimeMinedCoins
-        let tier = int (Decimal.Truncate(safeLifetime / milestoneSize))
+        let tier = int (System.Decimal.Truncate(safeLifetime / milestoneSize))
         1 + tier
 
     let manualDifficultyReductionLevel (state: GameState) =
-        state.Upgrades
-        |> Map.tryFind UpgradeKind.ManualDifficultyReduction
-        |> Option.map (fun upgrade -> clampIntMin 0 upgrade.Level)
-        |> Option.defaultValue 0
+        let cfg = config ()
+        let effectPerLevel =
+            GameConfig.findUpgradeByEffectType "manualDifficultyReduction" cfg
+            |> Option.map (fun (_, c) -> c.EffectPerLevel)
+            |> Option.defaultValue 1m
+        let upgradeKey =
+            GameConfig.findUpgradeByEffectType "manualDifficultyReduction" cfg
+            |> Option.map fst
+        match upgradeKey with
+        | Some key ->
+            state.Upgrades
+            |> Map.tryFind key
+            |> Option.map (fun upgrade -> int (decimal (clampMin 0 upgrade.Level) * effectPerLevel))
+            |> Option.defaultValue 0
+        | None -> 0
 
     let manualDifficulty (state: GameState) =
         let baseDifficulty = difficultyFromLifetimeMined state.Economy.LifetimeMinedCoins
         let reduction = manualDifficultyReductionLevel state
         let pressure = clampInt -4 8 state.Market.DifficultyPressure
-        clampIntMin 1 (baseDifficulty - reduction + pressure)
+        clampMin 1 (baseDifficulty - reduction + pressure)
 
     let autoMinerEfficiencyMultiplier (state: GameState) =
+        let cfg = config ()
+        let effectPerLevel =
+            GameConfig.findUpgradeByEffectType "autoMinerEfficiency" cfg
+            |> Option.map (fun (_, c) -> c.EffectPerLevel)
+            |> Option.defaultValue 0.25m
+        let upgradeKey =
+            GameConfig.findUpgradeByEffectType "autoMinerEfficiency" cfg
+            |> Option.map fst
         let level =
-            state.Upgrades
-            |> Map.tryFind UpgradeKind.AutoMinerEfficiency
-            |> Option.map (fun upgrade -> clampIntMin 0 upgrade.Level)
-            |> Option.defaultValue 0
+            match upgradeKey with
+            | Some key ->
+                state.Upgrades
+                |> Map.tryFind key
+                |> Option.map (fun upgrade -> clampMin 0 upgrade.Level)
+                |> Option.defaultValue 0
+            | None -> 0
 
-        1m + (decimal level * 0.25m)
+        1m + (decimal level * effectPerLevel)

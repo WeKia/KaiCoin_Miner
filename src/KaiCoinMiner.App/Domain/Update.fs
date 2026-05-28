@@ -1,30 +1,19 @@
 ﻿namespace KaiCoinMiner.App.Domain
 
 open System
+open Common
 
 module Update =
     type Effect =
         | SaveState
         | LoadState
 
-    let private clampMin minimum value =
-        if value < minimum then minimum else value
-
-    let private addMinedCoins amount (state: GameState) =
-        let mined = clampMin 0m amount
-
-        { state with
-            Economy =
-                { state.Economy with
-                    Coins = state.Economy.Coins + mined
-                    LifetimeMinedCoins = state.Economy.LifetimeMinedCoins + mined } }
-
     let update (msg: Msg) (state: GameState) : GameState * Effect list =
         match msg with
         | MineRequested amount ->
-            addMinedCoins amount state, []
+            Mining.addMinedCoins amount state, []
         | AutoMinerTicked amount ->
-            addMinedCoins amount state, []
+            Mining.addMinedCoins amount state, []
         | Tick at ->
             let deltaSeconds =
                 match state.Timer.LastTickAt with

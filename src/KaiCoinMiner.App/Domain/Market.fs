@@ -1,43 +1,45 @@
 ﻿namespace KaiCoinMiner.App.Domain
 
+open Common
+
 module Market =
-    let private clampMin minimum value =
-        if value < minimum then minimum else value
 
-    let private clampMax maximum value =
-        if value > maximum then maximum else value
-
-    let private clampInt rangeMin rangeMax value =
-        value |> max rangeMin |> min rangeMax
-
-    let private positiveModulo value modulus =
-        ((value % modulus) + modulus) % modulus
+    let private config () = GameConfig.ensureLoaded ()
 
     let private randomWalkPercent nonce =
         let step = positiveModulo (nonce * 37 + 11) 11
         decimal (step - 5) / 100m
 
     let private applyPriceMultiplier currentPrice multiplier =
-        clampMin 0.0001m (currentPrice * multiplier)
+        let minPrice = (config ()).Global.MinCoinPrice
+        clampMin minPrice (currentPrice * multiplier)
 
     let private appendHeadline headline ticker =
         headline :: ticker |> List.truncate 8
 
     let private marketAnalysisLevel (state: GameState) =
-        state.Upgrades
-        |> Map.tryFind UpgradeKind.MarketAnalysis
+        let cfg = config ()
+        GameConfig.findUpgradeByEffectType "marketAnalysis" cfg
+        |> Option.bind (fun (key, _) -> state.Upgrades |> Map.tryFind key)
         |> Option.map (fun upgrade -> max 0 upgrade.Level)
         |> Option.defaultValue 0
 
     let private marketVolatilityMultiplier level =
-        let damped = 1m - (decimal level * 0.08m)
-        damped |> clampMin 0.35m |> clampMax 1m
+        let cfg = config ()
+        let effectPerLevel =
+            GameConfig.findUpgradeByEffectType "marketAnalysis" cfg
+            |> Option.map (fun (_, c) -> c.EffectPerLevel)
+            |> Option.defaultValue 0.08m
+        let minDamp = cfg.Global.MarketAnalysisMinDamp
+        let damped = 1m - (decimal level * effectPerLevel)
+        damped |> clampMin minDamp |> clampMax 1m
 
     let private dampNewsImpact multiplier newsMultiplier =
         1m + ((newsMultiplier - 1m) * multiplier)
 
     let setCoinPrice price (state: GameState) =
-        { state with Economy = { state.Economy with CoinPrice = clampMin 0.0001m price } }
+        let minPrice = (config ()).Global.MinCoinPrice
+        { state with Economy = { state.Economy with CoinPrice = clampMin minPrice price } }
 
     let step deltaSeconds nonce (state: GameState) =
         let seconds = clampMin 0m deltaSeconds

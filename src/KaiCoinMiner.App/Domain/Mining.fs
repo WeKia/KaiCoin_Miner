@@ -1,15 +1,14 @@
 ﻿namespace KaiCoinMiner.App.Domain
 
+open Common
+
 type ManualReward =
     { CoinsAwarded: decimal
       CashAwarded: decimal
       Message: string }
 
 module Mining =
-    let private clampMin minimum value =
-        if value < minimum then minimum else value
-
-    let private addMinedCoins amount (state: GameState) =
+    let addMinedCoins amount (state: GameState) =
         let mined = clampMin 0m amount
 
         { state with

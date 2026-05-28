@@ -9,34 +9,32 @@ type FinalShopItem =
       Description: string }
 
 module Shop =
+    let private config () = GameConfig.ensureLoaded ()
+
     let spaceshipToMars : FinalShopItem =
+        let cfg = GameConfig.defaultConfig ()
         { Name = "Spaceship to Mars"
-          CostCash = 250000m
+          CostCash = cfg.Global.SpaceshipCost
           ClearTrigger = WinState.Launching
           Description = "One-way ticket from idle grind to interplanetary clear." }
+
+    let spaceshipCost () =
+        (config ()).Global.SpaceshipCost
 
     let private roundCurrency (value: decimal) =
         Decimal.Round(value, 2, MidpointRounding.AwayFromZero)
 
-    let private autoMinerGrowthRates =
-        Map.ofList [
-            AutoMinerKind.Monkey, 1.15m
-            AutoMinerKind.RestingYouth, 1.18m
-            AutoMinerKind.Gpu, 1.22m
-        ]
-
-    let private upgradeGrowthRates =
-        Map.ofList [
-            UpgradeKind.ManualDifficultyReduction, 1.45m
-            UpgradeKind.AutoMinerEfficiency, 1.55m
-            UpgradeKind.MarketAnalysis, 1.6m
-        ]
-
     let private autoMinerGrowth kind =
-        Map.tryFind kind autoMinerGrowthRates |> Option.defaultValue 1.2m
+        (config ())
+        |> GameConfig.tryGetAutoMiner kind
+        |> Option.map (fun c -> c.GrowthRate)
+        |> Option.defaultValue 1.2m
 
     let private upgradeGrowth kind =
-        Map.tryFind kind upgradeGrowthRates |> Option.defaultValue 1.5m
+        (config ())
+        |> GameConfig.tryGetUpgrade kind
+        |> Option.map (fun c -> c.GrowthRate)
+        |> Option.defaultValue 1.5m
 
     let autoMinerNextCost kind (state: GameState) =
         state.AutoMiners
@@ -96,12 +94,12 @@ module Shop =
 
     let canBuySpaceshipToMars (state: GameState) =
         state.WinState = WinState.NotWon
-        && state.Economy.Cash >= spaceshipToMars.CostCash
+        && state.Economy.Cash >= spaceshipCost ()
 
     let buySpaceshipToMars (state: GameState) =
         if canBuySpaceshipToMars state then
             { state with
-                Economy = { state.Economy with Cash = state.Economy.Cash - spaceshipToMars.CostCash }
+                Economy = { state.Economy with Cash = state.Economy.Cash - spaceshipCost () }
                 WinState = spaceshipToMars.ClearTrigger },
             true
         else
